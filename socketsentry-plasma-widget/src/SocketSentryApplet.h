@@ -60,6 +60,10 @@ protected:
     // Disconnect from source when hidden, reconnect when shown.
     virtual void popupEvent(bool popped);
 
+    // If the form factor changes, disconnect or reconnect to the configured source depending on whether or not
+    // the applet is iconified.
+    virtual void constraintsEvent(Plasma::Constraints constraints);
+
 private slots:
     // Receives updates from the engine.
     void dataUpdated(const QString& sourceName, const Plasma::DataEngine::Data& data);
@@ -80,7 +84,14 @@ private slots:
 
 private:
     // Returns true if the applet is either open on the desktop or popped up if it is contained on a panel.
-    bool isOpen() const;
+    bool isDisplayed() const;
+
+    // Disconnect from or connect to the configured data engine source depending on whether or not the applet is
+    // currently visible (not iconified). Disconnecting from the data engine when the applet is not visible
+    // reduces our resource overhead. If the connection state of the source is already correct for the current
+    // visibility, no changes are made. The caller specifies the current visibility in the argument, which it
+    // can obtain through a call to isDisplayed() if it doesn't know any better.
+    void updateSourceConnection(bool visible);
 
     // The main widget.
     NetworkDeviceWidget* _mainWidget;

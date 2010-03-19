@@ -49,9 +49,13 @@ SocketSentryApplet::~SocketSentryApplet() {
     }
 }
 
-bool SocketSentryApplet::isOpen() const {
+bool SocketSentryApplet::isDisplayed() const {
+    // As of KDE 4.4, Plasma doesn't have a convenient API for this, so we take a guess based on two assumptions:
+    // 1) A form factor of horizontal or veritcal means we're contained in a panel.
+    // 2) A panel is smaller than our minimum height or width, so we're iconified in it.
+    // Discussed other approaches in the Plasma mailing list, but this'll have to suffice for now.
     if (formFactor() == Plasma::Horizontal || formFactor() == Plasma::Vertical) {
-        // Applet is a popup icon on a panel. (Always?)
+        // Applet is a popup icon on a panel. We're visible only if the popup is showing.
         return isPopupShowing();
     } else {
         // Applet is always open (e.g. on the desktop).
@@ -106,12 +110,25 @@ void SocketSentryApplet::init() {
 
 void SocketSentryApplet::popupEvent(bool popped) {
     Plasma::PopupApplet::popupEvent(popped);
-    if (popped && _connectedSourceName.isEmpty()) {
-        _dataEngine->connectSource(_appletConfig.getSelectedDevice(), this, 0, Plasma::NoAlignment);
-        _connectedSourceName = _appletConfig.getSelectedDevice();
-    } else if (!_connectedSourceName.isEmpty()) {
+    updateSourceConnection(popped);
+}
+
+void SocketSentryApplet::constraintsEvent(Plasma::Constraints constraints) {
+   Plasma::PopupApplet::constraintsEvent(constraints);
+   if (constraints & Plasma::FormFactorConstraint) {
+        updateSourceConnection(isDisplayed());
+    }
+}
+
+void SocketSentryApplet::updateSourceConnection(bool visible) {
+    if (!visible && !_connectedSourceName.isEmpty()) {
+        // Transitioning from displayed to hidden. Disconnect source.
         _dataEngine->disconnectSource(_connectedSourceName, this);
         _connectedSourceName = "";
+    } else if (visible && _connectedSourceName.isEmpty()) {
+        // Transitioning from hidden to displayed. Connect source.
+        _dataEngine->connectSource(_appletConfig.getSelectedDevice(), this, 0, Plasma::NoAlignment);
+        _connectedSourceName = _appletConfig.getSelectedDevice();
     }
 }
 
@@ -126,7 +143,7 @@ void SocketSentryApplet::exportEngineConfiguration() {
     _dataEngine->setProperty(RESOLVE_NAMES_PROPERTY, _appletConfig.getResolveNames());
     _dataEngine->setProperty(CUSTOM_FILTER_PROPERTY, _appletConfig.getCustomFilter());
     // If device name is changing, connect to new source.
-    if (isOpen() && _connectedSourceName != _appletConfig.getSelectedDevice()) {
+    if (isDisplayed() && _connectedSourceName != _appletConfig.getSelectedDevice()) {
         _dataEngine->connectSource(_appletConfig.getSelectedDevice(), this, 0, Plasma::NoAlignment);
         _connectedSourceName = _appletConfig.getSelectedDevice();
     }
