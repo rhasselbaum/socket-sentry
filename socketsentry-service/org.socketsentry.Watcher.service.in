@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.socketsentry.Watcher
+Exec=@CMAKE_INSTALL_PREFIX@/bin/@SS_SERVICE_EXE@
+User=root

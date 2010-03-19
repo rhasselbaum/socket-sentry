@@ -1,0 +1,9 @@
+syntax: regexp
+
+# Ignore build directory.
+^build/
+
+# Ignore Eclipse project artifacts.
+^\.cproject
+^\.externalToolBuilders/cmake.launch
+^\.project

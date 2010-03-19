@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=Socket Sentry Engine
+Comment=Network connections monitor
+Type=Service
+ 
+X-KDE-ServiceTypes=Plasma/DataEngine
+X-KDE-Library=socksent-plasma-engine
+X-Plasma-EngineName=socketsentry
+X-KDE-PluginInfo-Author=Rob Hasselbaum
+X-KDE-PluginInfo-Email=rob@hasselbaum.net
+X-KDE-PluginInfo-Name=socketsentry
+X-KDE-PluginInfo-Version=0.9
+X-KDE-PluginInfo-Website=http://socketsentry.org/
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
