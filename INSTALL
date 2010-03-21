@@ -28,7 +28,7 @@ Kubuntu 9.10 or later users can run this to get the required packages:
   sudo apt-get install build-essential cmake libqt4-dev libpcap-dev kde-devel
 
 openSUSE 11.2 or later users can run this to get the required packages:
-  zypper install cmake libqt4-devel libpcap-devel
+  zypper install cmake libqt4-devel libpcap-devel libkde4-devel
 
 Sadly, neither distribution packages GMock/GTest. You can download and install
 them manually or skip them if you don't care about running the unit tests.

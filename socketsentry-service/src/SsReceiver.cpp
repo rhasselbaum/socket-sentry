@@ -51,6 +51,7 @@ int main(int argc, char* argv[]) {
         err << "ERROR: " << error << endl;
         err << "The service has encountered a problem or is not running." << endl;
         printUsage(err);
+        return -1;
     } else {
         // Found service. Looks OK.
         WatcherClientConsolePrinter* printer = new WatcherClientConsolePrinter(&watcher);

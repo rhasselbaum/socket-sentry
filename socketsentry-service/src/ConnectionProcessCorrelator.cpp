@@ -21,6 +21,7 @@
 #include "IpEndpointPair.h"
 #include "OsProcess.h"
 #include "CommonTypes.h"
+#include "LogSettings.h"
 
 #include <netinet/in.h>
 #include <pwd.h>
@@ -83,7 +84,7 @@ ConnectionProcessCorrelator::ConnectionProcessCorrelator() :
     _connEntryRegex(CONN_ENTRY_PATTERN), _digitsRegex("\\d+"), _tcp4Path(DEFAULT_TCP4_PATH),
     _tcp6Path(DEFAULT_TCP6_PATH), _udp4Path(DEFAULT_UDP4_PATH), _udp6Path(DEFAULT_UDP6_PATH),
     _socketSymLinkRegex(SOCKET_SYMLINK_PATTERN), _procNameRegex(PROC_NAME_PATTERN),
-    _procUidRegex(PROC_UID_PATTERN) {
+    _procUidRegex(PROC_UID_PATTERN), _logStats(LogSettings::getInstance().logProcessCorrelation()) {
 }
 
 ConnectionProcessCorrelator::~ConnectionProcessCorrelator() {
@@ -253,7 +254,9 @@ bool ConnectionProcessCorrelator::findProcessSockets(const QHash<int, IpEndpoint
             }
         }
 
-        qDebug() << "Mapped" << result.size() << "out of" << inodeConnections.size() << "connection(s) to OS processes.";
+        if (_logStats) {
+            qDebug() << "Mapped" << result.size() << "out of" << inodeConnections.size() << "connection(s) to OS processes.";
+        }
 
         // Fill out the result for any inodes that weren't found. Any connections not already mapped to a
         // process gets mapped to an "empty" one here.

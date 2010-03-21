@@ -83,6 +83,7 @@ private:
     const QString _device;                      // the OS device name
     const QString _customFilter;                // if specifiied, it'll be added to the capture filter
     const int _timeoutSecs;                     // max time the thread stays alive without a ping
+    const bool _logStats;                       // true if packet capture stats should be logged to debug
 
     // Mutex for shared mutable state.
     mutable QMutex _mutex;

@@ -59,6 +59,7 @@ set (SsService_SRCS
 	src/DateTimeUtils.cpp
 	src/HostNameResolver.cpp
 	src/Latch.cpp
+	src/LogSettings.cpp
 )
 
 # Client library sources (no main function)

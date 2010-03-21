@@ -26,13 +26,15 @@
 #include "FlowMetrics.h"
 #include "DataLinkPacketDecoder.h"
 #include "CommonTypes.h"
+#include "LogSettings.h"
 
 const int PcapThread::DEFAULT_TIMEOUT_SECS = 30;
 const int PcapThread::SNAPLEN = 128;
 
 PcapThread::PcapThread(QObject* parent, const QString& device, const QString& customFilter) :
     QThread(parent), _mutex(QMutex::Recursive), _device(device), _customFilter(customFilter),
-    _timeoutSecs(DEFAULT_TIMEOUT_SECS), _pcapHandle(NULL), _dataLinkDecoder(NULL), _networkInterface(NULL) {
+    _timeoutSecs(DEFAULT_TIMEOUT_SECS), _logStats(LogSettings::getInstance().logPacketCapture()),
+    _pcapHandle(NULL), _dataLinkDecoder(NULL), _networkInterface(NULL) {
 
     // Do we have a network interface?
     QNetworkInterface iface = QNetworkInterface::interfaceFromName(device);
@@ -217,10 +219,12 @@ void PcapThread::processPacket(const pcap_pkthdr* pcapHeader, const u_char* byte
                 _mutex.lock();
                 _sharedMutables.history.record(endpoints, metrics, capTime);
                 _mutex.unlock();
-                qDebug("[%s]: %s %s %d bytes", _device.toLatin1().constData(),
-                        (direction == INBOUND) ? "In " : "Out",
-                        endpoints.toString().toLatin1().constData(),
-                        pcapHeader->len);
+                if (_logStats) {
+                    qDebug("[%s]: %s %s %d bytes", _device.toLatin1().constData(),
+                            (direction == INBOUND) ? "In " : "Out",
+                            endpoints.toString().toLatin1().constData(),
+                            pcapHeader->len);
+                }
             } // Else, couldn't decode IP packet. Oh well.
         } // Else, not an IP packet. Oh well.
     }

@@ -94,6 +94,9 @@ private:
     const QString _udp4Path;
     const QString _udp6Path;
 
+    // True if correlation stats should be logged to debug. False, otherwise.
+    const bool _logStats;
+
     // Address lengths in bytes.
     static const uint IPV4_ADDR_LEN;
     static const uint IPV6_ADDR_LEN;
@@ -127,6 +130,7 @@ private:
     // address corresponds to the ANY address, then the returned host is set to the default address and its
     // "isNull" method returns true.
     QHostAddress convertIpAddress(const QString& address) const;
+
 
 };
 
