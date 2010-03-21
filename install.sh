@@ -44,3 +44,4 @@ fi
 
 kbuildsycoca4
 
+../postinst.sh

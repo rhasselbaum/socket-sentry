@@ -80,8 +80,9 @@ void SocketSentryApplet::init() {
             QHash<QString, QVariant> engineStatus =  _dataEngine->query("status");
             if (engineStatus.contains("error")) {
                 QString engineError = engineStatus["error"].value<QString>();
-                i18n("The data engine could not retrieve the list of network devices. Error: %1").arg(engineError);
-                setFailedToLaunch(true, engineError);
+                QString msg = i18n("<p>Sorry, the data engine reported an error: \"%1\"</p>").arg(engineError);
+                msg += i18n("<p>If you just installed this widget, please try logging out and logging back in.</p>");
+                setFailedToLaunch(true, msg);
             } else {
                 setFailedToLaunch(true, i18n("The data engine did not report an error, but no network devices are found."));
             }

@@ -1,86 +1,32 @@
-Features:
-* IPv6 support
-* Host name resolution
-* Transfer rates by connection
-* Connections grouped by process
-* Shared-service architecture means multiple widgets can run simultaneously with minimal extra overhead.
 
+	Socket Sentry - A real-time network traffic monitor for KDE Plasma.
 
-Take control of your network connection. Questions Socket Watch can help you answer:
+Overview
 
-* What programs on my computer are phoning home? How often?
-* How much bandwidth does Gmail/Facebook/Twitter/My-Favorite-Web-App use if I leave it open?
-* What programs are the biggest bandwidth hogs?
-* Does my browser keep talking to the web server after the page is loaded?
-* My program seems to be frozen. Is it communicating on the network?
-* My network printer won't print. Is the job being sent to it?
-* Is someone connecting to my SSH/Samba/FTP/CUPS/Web/Other server right now?
-* How many connections is my download manager using? What's the throughput of each?
+	A KDE Plasma widget that displays real-time traffic information for 
+	active network connections on your Linux computer. It shows you which
+	processes are communicating with which hosts, current data transfer 
+	rates, protocols, and more. You can view all connections or see
+	summary traffic by host pair and process or program. It supports IPv4
+	and 6, optional host name lookups with configurable subdomain depth,
+	and many sorting and filtering options including pcap filter expressions.
+	Project home: http://code.google.com/p/socket-sentry
+	
+Installation
 
+	See the INSTALL file for details on how to build and install the software.
+	Alternatively, packages are available for certain distros. Check the web
+	site for details.
+	
+Authors and license
 
-Can I run Socket Watch on GNOME, Xfce, or <insert favorite alternative desktop here>?
+	Copyright (C) 2010 by Rob Hasselbaum <rob@hasselbaum.net>
 
-No, not yet. However, the code has been structured in such a way as to minimize coupling between the back-end data collection module and the UI, so if you are a developer interested in crearing an alternative UI, it should not be terribly hard. The service component has no dependency on KDE and communicates with other processes over a standard D-Bus interface. (It does depend on some non-GUI parts of Qt.)
+	Socket Sentry is free software distributed under the GNU General Public
+	License version 3. See the LICENSE file for terms.
+	
+On the web
 
-How does the service gets its data?
-
-The Socket Watch service captures packet headers as they pass through each monitored network interface. Using this data, it builds a rolling history of network activity and calculates statistics like throughput. The connections observed through packet capture are then matched against the kernel's network connection tables exposed in the /proc/net pseudo-directory. This is the same data souce that is used by well-known tools like "netstat" and enables Socket Watch to match packet traffic to OS processes--a feature that, as far as we know, is unique to Socket Watch among Linux tools. The service aggregates this data on a periodic basis and sends it to interested listeners over it's D-Bus interface.
-
-Why don't I see broadcast (and perhaps multicast) traffic?
-
-Socket Watch filters captured packets by entries that appear in the operating system's connection tables. That means only unicast (and perhaps multicast) traffic will appear. In general, if a connection doesn't show up using the "netstat" command line tool, it won't show up in Socket Watch either.
-
-Why don't I see some connections in Socket Watch?
-
-If you see an established TCP or UDP connection in "netstat" but there is no corresponding connection in Socket Watch, the most likely explanation is that there has not been any traffic flowing over that connection for a while. Socket Watch shows only utilized connections, so connections that have been idle for a long time (30 seconds) will disappear. Additionally, some very short-lived connections (and processes) may never appear in Socket Watch if they come and go within its connection-process polling interval. Yet another possibility is that you've applied a custom filter expression that is excluding the traffic in question.
-
-Why do I sometimes see a connection with no associated process?
-
-As connections are created and destroyed, there is some period of time in which the connection appears in the kernel's connection table, but is gone before Socket Watch is able to correlate it to a process. Instead of hiding those connections, the developers of Socket Watch have chosen to show them with no associated process. This is a "feature", not a "bug". ;-)
-
-I get an "Unsupported data link layer type" error. What can I do?
-
-The packet capture library we use (pcap) exposes only raw packet data, which means the routines to decode the data have to be implemented inside Socket Watch. We support the most common data link layer types (like Ethernet), but others need to be written. If you're interested in getting support for your data link layer, create a ticket in our issue tracker system. Include the link layer type number from the error message and a description of your equipment and network. If possible, please include a sample of captured traffic using Wireshark or tcpdump.
-
-Why does the Socket Watch service need to run as root?
-
-This is required on Linux machines in order to capture the packet headers using the pcap library and to read the process file descriptors from the /proc filesystem. This means that anyone who is allowed to connect to the Socket Watch service over D-Bus will see traffic statistics of all the other users on the system, which may or may not be a good thing on a multiuser box.
-
-Does Socket Watch support other UNIX-like operating systems besides Linux?
-
-We have not tested Socket Watch on any other operating systems. If you are a developer interested in porting it to another OS, we welcome your help! Most of the code should be portable with the possible exception of the "/proc" filesystem details, which are probably specific to Linux.
-
-Can I run Socket Watch on my production server?
-
-Socket Watch is designed for real-time connection monitoring on a desktop or smaller computer. Although you certainly could run it on a server, a project like ntop will probably work better for you, since it provides historical analysis of traffic. Plus, although Socket Watch is designed to go easy on system resources, correlating network traffic to OS processes is not a cost-free operation and probably of little benefit to server administrators. After all, if you're running, say, a web server, the fact that most of your connections are going to Apache is probably not surprising or useful information.
-
-I want to use regular expressions in the search box. Can I?
-
-Although it would have been technically easy to support this, the search box does not currently interpret regular expressions because it would be confusing to users who don't understand them, so we opted for simplicity here. But we may make this an option in the future. You can, however, use wildcards. For example, typing "f*fox" will match "firefox". 
-
-What does an asterisk '*' mean when it appears next to a process ID or program name?
-
-See the answer to "Some connections are showing up with the wrong process or program. Why is this happening?" 
-
-How can I reduce CPU overhead when using this tool?
-
-Socket Sentry is designed to minimize its impact on system resources (particularly CPU usage), but it is not magic. Here are some tips to minimize its impact on your computer's performance.
-1) Place the widget on a panel so it will only appear when you click its icon. Socket Sentry uses very few resources when it's "minimized" like this.
-1) Turn off host name lookups in global settings.
-2) In local settings, set the row aggregation mode to "host pair and program". This reduces the amount of work required to redraw the table, which is relatively expensive.
-
-
-TROUBLESHOOTTING
-
-I am getting a cryptic error: "Launch helper exited with unknown return code 254". Huh?
-
-This error comes from D-Bus. If you just installed Socket Sentry, try rebooting. If that doesn't help, it most likely means that your user account doesn't have permission to activate the Socket Sentry D-Bus service on demand. If you're logged in at the local console, this shouldn't be a problem. But if you're not or your distros doesn't recognize the "at_console='true'" attribute in D-Bus configuration files, then you might run into this. To work around it, create a new group on your machine called "socketsentry" and add your user account(s) to it. That should enable you to activate and access the service over D-Bus.
-
-When I type text into the search box, I get back some extra rows that don't match. What's going on?
-
-The search box searches all the columns for the text you typed including hidden ones. You can hover over one of these hidden rows, and you'll see the values of hidden columns in the tooltip text. 
-
-Some connections are showing up with the wrong process or program. Why is this happening?
-
-In Linux and other UNIX-like operating systems, open Internet sockets can be shared among processes. This is typical among service daemons like openSSH, but can also arise in desktop scenarios. For example, it can happen in KDE when Firefox launches a helper application like Amarok to open a music stream. In situations like this, Socket Sentry cannot tell with certainty which process out of those sharing the socket is responsible for the traffic. By default, it chooses the oldest process. This is appropriate for the Firefox helper scenario, but may not be appropriate for daemons. You can tell Socket Sentry to assign traffic the newest process instead via the "Global Settings" configuration dialog. Processes that are sharing a socket with others are displayed with an asterisk '*' after the process ID or program name. By clicking and hovering over the row, you can see all the processes/programs sharing the socket in the tooltip.
-   
+	Project home: http://code.google.com/p/socket-sentry
+	Bug reports: http://code.google.com/p/socket-sentry/issues/list
+	Discussion group: http://groups.google.com/group/socket-sentry

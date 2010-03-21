@@ -17,6 +17,7 @@ target_link_libraries(socksent-plasma-engine socketsent-client-common ${KDE4_KDE
 install(TARGETS socksent-plasma-engine
         DESTINATION ${PLUGIN_INSTALL_DIR})
  
-install(FILES socksent-plasma-engine.desktop
-        DESTINATION ${SERVICES_INSTALL_DIR})
-
+set (SS_ENGINE_DESKTOP_FILE socksent-plasma-engine.desktop)
+configure_file (${SS_ENGINE_DESKTOP_FILE}.in ${CMAKE_CURRENT_BINARY_DIR}/${SS_ENGINE_DESKTOP_FILE})
+install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${SS_ENGINE_DESKTOP_FILE} DESTINATION ${SERVICES_INSTALL_DIR})
+ 

@@ -24,10 +24,10 @@ To build all three parts, make sure you have the prerequisites.
 - libpcap >= 1.0 with headers
 - (optional) Google Mock and Google Test >= 1.4
 
-Kubuntu users can run this to get the required packages:
+Kubuntu 9.10 or later users can run this to get the required packages:
   sudo apt-get install build-essential cmake libqt4-dev libpcap-dev kde-devel
 
-openSUSE users can run this to get the required packages:
+openSUSE 11.2 or later users can run this to get the required packages:
   zypper install cmake libqt4-devel libpcap-devel
 
 Sadly, neither distribution packages GMock/GTest. You can download and install
@@ -42,6 +42,45 @@ The script will escalate your privileges to root (using "sudo") to complete the
 installation. If that makes you nervous, you can do each step manually. Just
 take a look at what "install.sh" does and do the same thing at the console.    
 
+IMPORTANT: The last step of the installation is to restart your Plasma desktop
+session. You will very likely get an error if you try to use the widget before
+doing this. To restart Plasma, you can log out and then log back in. Or at the
+console, type:
+  kquitapp plasma-desktop
+  plasma-desktop 
+
+INSTALLING SOCKET SENTRY FROM PACKAGES
+======================================
+
+IMPORTANT: If you are upgrading to a new version of Socket Sentry, you must
+========== uninstall the old version first. Follow the uninstallation
+           instructions at the end of this document before continuing.
+
+Binary installation packages for certain Linux distributions are available at
+the project web site. You can also build them yourself from sources. The
+procedure is roughly the same as above, except you run an appropriate
+"./package-<distro>.sh" script instead of the generic "./install.sh" script,
+replacing <distro> with your distro name (e.g. "package-ubuntu.sh" for Kubuntu).
+Please note that building a package for a different distribution than the one
+you're currently running is not supported at this time. Also note that the
+generated packages are not "official" packages maintained by the distro
+develoeprs. If your distro provides its own packages, you should use those
+instead unless you want the absolute latest code.
+
+If you have trouble running the "./package-<distro>.sh" script after having
+run a normal build first, please delete the contents of the "build" subdirectory
+and try again.
+
+The package files (*.deb or *.rpm) are placed in the "build" subdirectory and
+can be installed through your package manager.
+
+IMPORTANT: The last step of the installation is to restart your Plasma desktop
+session. You will very likely get an error if you try to use the widget before
+doing this. To restart Plasma, you can log out and then log back in. Or at the
+console, type:
+  kquitapp plasma-desktop
+  plasma-desktop 
+
 TESTING THE INSTALLATION
 ========================
 
@@ -51,29 +90,29 @@ To test the D-Bus service, run the following command (as non-root):
 This should print a list of supported network devices. You can call it again
 passing in a device name if you want to try it out. Press CTRL-C to end.
 
-If, instead, you get a cryptic error that says something like "Launch helper
-exited with unknown return code 254", it usually means you're not logged into
-the local console or D-Bus can't tell that you are. In either case, you need to
+If instead you get a cryptic error that says something like "Launch helper
+exited with unknown return code", it usually means you're not logged into the
+local console or D-Bus can't tell that you are. In either case, you need to
 give yourself explcit permission to access the D-Bus service. To do this,
 create a group called "socketsentry" and add your user account to it.
 
-Once you verified that the D-bus service works, you should be able to add the 
-Socket Sentry Plasma widget to your desktop. If not, try restarting KDE.
+Once you've verified that the D-bus service works and you've restarted Plasma
+as described in the installation instructions, you should be able to add the 
+Socket Sentry Plasma widget to your desktop. 
 
-Stir and enjoy!
+UNINSTALLING SOCKET SENTRY
+==========================
 
-UNINSTALLING SOCKET SENTRY FROM SOURCES
-=======================================
-
-To remove Socket Sentry or before upgrading to a new build, follow these steps:
+To remove Socket Sentry or before upgrading, follow these steps:
 
 1) Remove all Socket Sentry widgets from desktops and panels.
 
-2) At a shell prompt, run these commands as root: 
-   pkill -f socksent-service
-   cd <socketsentry_dir>/build
-   make uninstall
+2) a) If you installed directly from sources, run these commands as root:
+        pkill -f socksent-service
+        cd <socketsentry_dir>/build
+        make uninstall
+   b) If you installed from a package, remove it via your package manager.
    
 3) (optional) You may remove the [socksent-plasma-widget] global section from
-   the "~/.kde/share/config/plasma-desktop-appletsrc" file if you wish, but this
+   the "~/.kde/share/config/plasma-desktop-appletsrc" file if you wish. This
    is not required to upgrade.

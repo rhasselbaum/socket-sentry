@@ -1,5 +1,8 @@
+project (SocketSentry)
 cmake_minimum_required (VERSION 2.6.4)
 enable_testing()
+
+include(CPackConfig.cmake)
 
 # Look for required test support libraries (GMock/GTest). If successful, TEST_SUPPORT_LIBS
 # will be defined with them.
