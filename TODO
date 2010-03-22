@@ -1,4 +1,0 @@
-TODO:
-* Test failure modes: D-Bus service won't start, selected device not found, device list can't be gotten
-* D-Bus did not pick up installation configuration change on my work desktop. Had to reboot. Can daemon be reinitialized?
-* Debug output in service.
