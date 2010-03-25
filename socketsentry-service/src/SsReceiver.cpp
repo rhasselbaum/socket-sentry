@@ -37,6 +37,9 @@ void printUsage(QTextStream& err) {
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
     QStringList args = app.arguments();
+
+    qDebug("Socket Sentry Test Client v%s", PROJECT_VERSION);
+
     Q_ASSERT(args.size() >= 1);
     args.takeFirst();   // remove program name
 

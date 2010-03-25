@@ -130,6 +130,7 @@ get_filename_component(LIBRARY_OUTPUT_DIRECTORY ${PCAP} PATH)
 qt4_wrap_cpp (SsClientStub_MOC_OUTFILES ${SsClientStub_MOC_HEADERS})
 set (SsClientStub_ALL_SRCS ${SsClientStub_SRCS} ${SsClientStub_MOC_OUTFILES} ${SsCommon_SRCS})
 add_library (socketsent-client-common SHARED ${SsClientStub_ALL_SRCS})
+set_target_properties(socketsent-client-common PROPERTIES VERSION ${SS_PROJECT_VERSION})
 install (TARGETS socketsent-client-common DESTINATION ${LIBRARY_OUTPUT_DIRECTORY})
 
 # Create the client test executable.

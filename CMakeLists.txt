@@ -19,6 +19,10 @@ enable_testing()
 
 include(CPackConfig.cmake)
 
+# Initialize project version
+file (READ VERSION SS_PROJECT_VERSION)
+add_definitions (-DPROJECT_VERSION="${SS_PROJECT_VERSION}")
+
 # Look for required test support libraries (GMock/GTest). If successful, TEST_SUPPORT_LIBS
 # will be defined with them.
 find_library (GMOCK gmock)

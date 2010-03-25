@@ -64,6 +64,8 @@ int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
     QStringList args = app.arguments();
 
+    qDebug("Socket Sentry Service v%s", PROJECT_VERSION);
+
     // Initiaze logging, which also removes those options from the argument list.
     // This needs to happen before the Watcher is initalized.
     initLogOptions(args);

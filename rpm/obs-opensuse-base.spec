@@ -44,6 +44,7 @@ rm -rf $RPM_BUILD_ROOT
 %_bindir/socksent-service
 %config /etc/dbus-1/system.d/org.socketsentry.Watcher.conf
 %_prefix/share/dbus-1/system-services/org.socketsentry.Watcher.service
+%_libdir/libsocketsent-client-common.so.%{version}
 %_libdir/libsocketsent-client-common.so
 %_bindir/socksent-client
 %_kde4_modulesdir/socksent-plasma-engine.so
