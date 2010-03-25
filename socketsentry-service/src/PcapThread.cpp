@@ -32,9 +32,9 @@ const int PcapThread::DEFAULT_TIMEOUT_SECS = 30;
 const int PcapThread::SNAPLEN = 128;
 
 PcapThread::PcapThread(QObject* parent, const QString& device, const QString& customFilter) :
-    QThread(parent), _mutex(QMutex::Recursive), _device(device), _customFilter(customFilter),
+    QThread(parent),  _device(device), _customFilter(customFilter),
     _timeoutSecs(DEFAULT_TIMEOUT_SECS), _logStats(LogSettings::getInstance().logPacketCapture()),
-    _pcapHandle(NULL), _dataLinkDecoder(NULL), _networkInterface(NULL) {
+    _mutex(QMutex::Recursive), _pcapHandle(NULL), _networkInterface(NULL), _dataLinkDecoder(NULL) {
 
     // Do we have a network interface?
     QNetworkInterface iface = QNetworkInterface::interfaceFromName(device);

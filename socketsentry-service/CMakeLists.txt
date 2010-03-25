@@ -125,11 +125,12 @@ install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${WATCHER_SERVICE_FILE} DESTINATION $
 # Create the unit tests.
 add_qtestlib_tests ("${SsService_TEST_SRCS}" ${QT_LIBRARIES} ${PCAP} socksent-service-common)
 
-# Create client shared lib.
+# Create client shared lib. The lib directory will be the same as that used by pcap (e.g. lib64 or lib).
+get_filename_component(LIBRARY_OUTPUT_DIRECTORY ${PCAP} PATH)
 qt4_wrap_cpp (SsClientStub_MOC_OUTFILES ${SsClientStub_MOC_HEADERS})
 set (SsClientStub_ALL_SRCS ${SsClientStub_SRCS} ${SsClientStub_MOC_OUTFILES} ${SsCommon_SRCS})
 add_library (socketsent-client-common SHARED ${SsClientStub_ALL_SRCS})
-install (TARGETS socketsent-client-common DESTINATION lib)
+install (TARGETS socketsent-client-common DESTINATION ${LIBRARY_OUTPUT_DIRECTORY})
 
 # Create the client test executable.
 add_executable (socksent-client src/SsReceiver.cpp)

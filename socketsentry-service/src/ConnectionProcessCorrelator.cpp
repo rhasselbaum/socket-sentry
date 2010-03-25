@@ -81,10 +81,10 @@ const uint ConnectionProcessCorrelator::IPV4_ADDR_LEN = 4;
 const uint ConnectionProcessCorrelator::IPV6_ADDR_LEN = 16;
 
 ConnectionProcessCorrelator::ConnectionProcessCorrelator() :
-    _connEntryRegex(CONN_ENTRY_PATTERN), _digitsRegex("\\d+"), _tcp4Path(DEFAULT_TCP4_PATH),
+    _connEntryRegex(CONN_ENTRY_PATTERN), _digitsRegex("\\d+"), _socketSymLinkRegex(SOCKET_SYMLINK_PATTERN),
+    _procNameRegex(PROC_NAME_PATTERN), _procUidRegex(PROC_UID_PATTERN), _tcp4Path(DEFAULT_TCP4_PATH),
     _tcp6Path(DEFAULT_TCP6_PATH), _udp4Path(DEFAULT_UDP4_PATH), _udp6Path(DEFAULT_UDP6_PATH),
-    _socketSymLinkRegex(SOCKET_SYMLINK_PATTERN), _procNameRegex(PROC_NAME_PATTERN),
-    _procUidRegex(PROC_UID_PATTERN), _logStats(LogSettings::getInstance().logProcessCorrelation()) {
+    _logStats(LogSettings::getInstance().logProcessCorrelation()) {
 }
 
 ConnectionProcessCorrelator::~ConnectionProcessCorrelator() {

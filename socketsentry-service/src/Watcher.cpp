@@ -43,16 +43,17 @@ const int Watcher::DEFAULT_CORRELATION_INTERVAL_MS = 2000;
 const int Watcher::DEFAULT_UPDATE_INTERVAL_MS = 1000;
 
 Watcher::Watcher() :
-    _correlator(new ConnectionProcessCorrelator), _pcapManager(new PcapManager),
-    _timerIntervalMs(DEFAULT_TIMER_INTERVAL_MS), _correlationIntervalMs(DEFAULT_CORRELATION_INTERVAL_MS ),
-    _updateIntervalMs(DEFAULT_UPDATE_INTERVAL_MS), _resolveNames(false), _osProcessSortAscending(true) {
+    _timerIntervalMs(DEFAULT_TIMER_INTERVAL_MS), _updateIntervalMs(DEFAULT_UPDATE_INTERVAL_MS),
+    _correlationIntervalMs(DEFAULT_CORRELATION_INTERVAL_MS ), _correlator(new ConnectionProcessCorrelator),
+    _pcapManager(new PcapManager), _resolveNames(false), _osProcessSortAscending(true) {
     init();
 }
 
 Watcher::Watcher(IConnectionProcessCorrelator* correlator, IPcapManager* pcapManager, int timerIntervalMs,
         int updateIntervalMs, int correlationIntervalMs) :
-    _correlator(correlator), _pcapManager(pcapManager), _timerIntervalMs(timerIntervalMs),
-    _updateIntervalMs(updateIntervalMs), _correlationIntervalMs(correlationIntervalMs), _resolveNames(false) {
+     _timerIntervalMs(timerIntervalMs), _updateIntervalMs(updateIntervalMs),
+     _correlationIntervalMs(correlationIntervalMs), _correlator(correlator), _pcapManager(pcapManager),
+     _resolveNames(false), _osProcessSortAscending(true) {
     init();
 }
 

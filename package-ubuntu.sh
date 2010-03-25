@@ -21,7 +21,7 @@
 # If you have trouble running this script after a normal build,
 # try clearing out the build directory first. 
 
-# This tunction creates a default Ubuntu package for some version of Ubuntu.
+# This function creates a default Ubuntu package for some version of Ubuntu.
 # ARGS:
 # $1: The Debian version (e.g. "karmic1", "lucid1", etc.)
 create_package()
