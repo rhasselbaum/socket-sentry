@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Try killing any old version of the service, but don't fail if we can't.
+pkill -f socksent-service | true
+
