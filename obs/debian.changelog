@@ -1,0 +1,5 @@
+socketsentry (@DEB_VERSION@) @DISTRO@; urgency=low
+
+  * Initial release.
+
+ -- Rob Hasselbaum <rob@hasselbaum.net>  Thu, 25 Mar 2010 23:23:12 -0400

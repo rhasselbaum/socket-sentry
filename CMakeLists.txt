@@ -17,8 +17,6 @@ project (SocketSentry)
 cmake_minimum_required (VERSION 2.6.4)
 enable_testing()
 
-include(CPackConfig.cmake)
-
 # Initialize project version
 file (READ VERSION SS_PROJECT_VERSION)
 add_definitions (-DPROJECT_VERSION="${SS_PROJECT_VERSION}")

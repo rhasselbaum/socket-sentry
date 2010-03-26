@@ -35,7 +35,7 @@ check_errs()
   fi
 }
 
-
+# Create pristine source tarball.
 VERSION=`cat VERSION`
 BASE_NAME=socketsentry-$VERSION
 OPENSUSE112_SPEC=$BASE_NAME-openSUSE_11.2.spec
@@ -45,6 +45,17 @@ tar cvfz staging/$BASE_NAME.tar.gz \
 	--transform s\\^\\$BASE_NAME/\\g * >/dev/null
 check_errs $? "Can't create archive $BASE_NAME"
 
+# Create RPM spec for openSUSE.
 echo "Creating RPM spec."
 sed <obs/socketsentry_basic.spec -e s/@VERSION@/$VERSION/g >staging/$BASE_NAME-openSUSE_11.2.spec
 check_errs $? "Can't generate spec file."
+
+# Create Debian files for Kubuntu.
+echo "Creating Debian changelog."
+sed <obs/debian.changelog -e s/@DEB_VERSION@/$VERSION-karmic1/g -e s/@DISTRO@/karmic/g >staging/debian.changelog
+echo "Creating Debian control."
+cp obs/debian.control staging
+echo "Creating Debian rules."
+cp obs/debian.rules staging
+echo "Creating Debian dsc."
+sed <obs/socketsentry.dsc -e s/@DEB_VERSION@/$VERSION-karmic1/g >staging/socketsentry.dsc

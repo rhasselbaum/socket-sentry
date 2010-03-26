@@ -1,7 +1,7 @@
 INSTALLING SOCKET SENTRY FROM SOURCES
 =====================================
 
-IMPORTANT: If you are upgrading to a new version of Socket Sentry, you must
+IMPORTANT: If you are upgrading to a new version of Socket Sentry, you should
 ========== uninstall the old version first. Follow the uninstallation
            instructions at the end of this document before continuing.
 
@@ -52,34 +52,33 @@ console, type:
 INSTALLING SOCKET SENTRY FROM PACKAGES
 ======================================
 
-IMPORTANT: If you are upgrading to a new version of Socket Sentry, you must
+IMPORTANT: If you are upgrading to a new version of Socket Sentry, you should
 ========== uninstall the old version first. Follow the uninstallation
            instructions at the end of this document before continuing.
 
 Binary installation packages for certain Linux distributions are available at
-the project web site. You can also build them yourself from sources. The
-procedure is roughly the same as above, except you run an appropriate
-"./package-<distro>.sh" script instead of the generic "./install.sh" script,
-replacing <distro> with your distro name (e.g. "package-ubuntu.sh" for Kubuntu).
-Please note that building a package for a different distribution than the one
-you're currently running is not supported at this time. Also note that the
-generated packages are not "official" packages maintained by the distro
-develoeprs. If your distro provides its own packages, you should use those
-instead unless you want the absolute latest code.
+the project web site and via the openSUSE Build Service (build.opensuse.org).
+These can be installed through your distro's native package manager.
 
-If you have trouble running the "./package-<distro>.sh" script after having
-run a normal build first, please delete the contents of the "build" subdirectory
-and try again.
-
-The package files (*.deb or *.rpm) are placed in the "build" subdirectory and
-can be installed through your package manager.
-
-IMPORTANT: The last step of the installation is to restart your Plasma desktop
+IMPORTANT: After installing the packages, you must restart your Plasma desktop
 session. You will very likely get an error if you try to use the widget before
 doing this. To restart Plasma, you can log out and then log back in. Or at the
 console, type:
   kquitapp plasma-desktop
   plasma-desktop 
+
+Note that these packages are not "official" packages maintained by the distro
+develoeprs. If your distro provides its own packages, you should use those
+instead unless you want the absolute latest code.
+
+You can also build the distro packages yourself if you have an account at the
+openSUSE Build Service (OBS). To do this, first run the "./obs-staging.sh"
+script from the top-level project directory. This will prepare a tarball of
+the source code and also generate the meta-package files, all of which are
+placed in a subdirectory called "staging". Simply upload the contents of
+this directory to OBS or use the command line "osc" tool to build packages
+locally. Full instructions for using OBS are available at their web site. 
+
 
 TESTING THE INSTALLATION
 ========================
