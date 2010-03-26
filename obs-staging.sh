@@ -38,6 +38,7 @@ check_errs()
 
 VERSION=`cat VERSION`
 BASE_NAME=socketsentry-$VERSION
+OPENSUSE112_SPEC=$BASE_NAME-openSUSE_11.2.spec
 echo Creating $BASE_NAME.tar.gz.
 tar cvfz staging/$BASE_NAME.tar.gz \
 	--exclude './.*' --exclude 'staging/**' --exclude 'build/**' \
@@ -45,5 +46,5 @@ tar cvfz staging/$BASE_NAME.tar.gz \
 check_errs $? "Can't create archive $BASE_NAME"
 
 echo "Creating RPM spec."
-sed <obs/socketsentry_basic.spec s/@VERSION@/$VERSION/g >staging/$BASE_NAME.spec
+sed <obs/socketsentry_basic.spec -e s/@VERSION@/$VERSION/g >staging/$BASE_NAME-openSUSE_11.2.spec
 check_errs $? "Can't generate spec file."

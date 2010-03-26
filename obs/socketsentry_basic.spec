@@ -31,8 +31,8 @@ and many sorting and filtering options including pcap filter expressions.
 %install  
 cd builddir  
 %kde4_makeinstall    
-%suse_update_desktop_file -n $RPM_BUILD_ROOT/usr/share/kde4/services/socksent-plasma-engine
-%suse_update_desktop_file -n $RPM_BUILD_ROOT/usr/share/kde4/services/socksent-plasma-widget
+%suse_update_desktop_file -n $RPM_BUILD_ROOT/usr/share/kde4/services/socksent-plasma-engine.desktop
+%suse_update_desktop_file -n $RPM_BUILD_ROOT/usr/share/kde4/services/socksent-plasma-widget.desktop
 %kde_post_install
 # Try to kill old service instance, but don't stop if we can't.
 pkill -f socksent-service | true
