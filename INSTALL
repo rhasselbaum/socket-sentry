@@ -1,9 +1,9 @@
 INSTALLING SOCKET SENTRY FROM SOURCES
 =====================================
 
-IMPORTANT: If you are upgrading to a new version of Socket Sentry, you should
-========== uninstall the old version first. Follow the uninstallation
-           instructions at the end of this document before continuing.
+IMPORTANT: If you are upgrading to a new build of Socket Sentry, you should
+========== uninstall the old one first. Follow the uninstallation instructions
+           at the end of this document before continuing.
 
 Socket Sentry is made up of three parts.
 
@@ -20,8 +20,8 @@ To build all three parts, make sure you have the prerequisites.
 - CMake >= 2.6
 - GCC and make
 - Qt >= 4.5 development files and headers
-- KDE 4.x development files and headers
-- libpcap >= 1.0 with headers
+- KDE >= 4.3 development files and headers
+- libpcap >= 0.8 with headers
 - (optional) Google Mock and Google Test >= 1.4
 
 Kubuntu 9.10 or later users can run this to get the required packages:
@@ -52,18 +52,16 @@ console, type:
 INSTALLING SOCKET SENTRY FROM PACKAGES
 ======================================
 
-IMPORTANT: If you are upgrading to a new version of Socket Sentry, you should
-========== uninstall the old version first. Follow the uninstallation
-           instructions at the end of this document before continuing.
+Binary installation packages for certain Linux distributions are available 
+via the openSUSE Build Service (build.opensuse.org). These can be installed
+through your distro's native package manager. You can also add our
+repositories to be notified about future upgrades. Visit 
+http://code.google.com/p/socket-sentry for details.
 
-Binary installation packages for certain Linux distributions are available at
-the project web site and via the openSUSE Build Service (build.opensuse.org).
-These can be installed through your distro's native package manager.
-
-IMPORTANT: After installing the packages, you must restart your Plasma desktop
-session. You will very likely get an error if you try to use the widget before
-doing this. To restart Plasma, you can log out and then log back in. Or at the
-console, type:
+IMPORTANT: After installing or upgrading packages, you must restart your
+Plasma desktop session. You will very likely get an error if you try to use
+the widget before doing this. To restart Plasma, you can log out and then log
+back in. Or at the console, type:
   kquitapp plasma-desktop
   plasma-desktop 
 
@@ -77,7 +75,7 @@ script from the top-level project directory. This will prepare a tarball of
 the source code and also generate the meta-package files, all of which are
 placed in a subdirectory called "staging". Simply upload the contents of
 this directory to OBS or use the command line "osc" tool to build packages
-locally. Full instructions for using OBS are available at their web site. 
+locally. Instructions for OBS are available at http://build.opensuse.org. 
 
 
 TESTING THE INSTALLATION
@@ -113,5 +111,4 @@ To remove Socket Sentry or before upgrading, follow these steps:
    b) If you installed from a package, remove it via your package manager.
    
 3) (optional) You may remove the [socksent-plasma-widget] global section from
-   the "~/.kde/share/config/plasma-desktop-appletsrc" file if you wish. This
-   is not required to upgrade.
+   the "~/.kde/share/config/plasma-desktop-appletsrc" file if you wish. 
