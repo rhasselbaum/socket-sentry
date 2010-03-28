@@ -1,0 +1,11 @@
+Socket Sentry changelog
+
+0.9.1 - 28-Mar-2010
+===================
+* ADDED clear button to quick search box.
+* FIXED KDE 4.4 regression that blocked signals from the service
+  and prevented sort freeze label from appearing.
+
+0.9.0
+======
+* Initial release

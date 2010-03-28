@@ -38,6 +38,10 @@ WatcherClient::WatcherClient(const QDBusConnection& connection, QObject* parent)
     qDBusRegisterMetaType<CommunicationFlow>();
     qDBusRegisterMetaType<QList<CommunicationFlow> >();
     qDBusRegisterMetaType<QList<OsProcess> >();
+
+    // Tickle the service to make sure it's up. Without this, automatic relay of signals doesn't
+    // seem to work starting with Qt 4.6 / KDE 4.4. (Older versions worked fine.)
+    call("ping");
 }
 
 WatcherClient::~WatcherClient() {

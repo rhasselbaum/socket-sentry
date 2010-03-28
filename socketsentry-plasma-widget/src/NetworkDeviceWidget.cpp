@@ -25,6 +25,7 @@
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QAbstractButton>
 #include <QtGui/QLabel>
+#include <QtGui/QPalette>
 #include <QtCore/QList>
 #include <KDE/KLineEdit>
 
@@ -32,6 +33,7 @@
 #include <Plasma/LineEdit>
 #include <Plasma/CheckBox>
 #include <Plasma/Frame>
+#include <Plasma/Theme>
 
 
 NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
@@ -50,11 +52,17 @@ NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     filterSortLayout->addItem(filterLabel);
     filterLabel->setText(i18n("Search"));
     Plasma::LineEdit* filterEdit = new Plasma::LineEdit();
+    filterEdit->setClearButtonShown(true);
     filterSortLayout->addItem(filterEdit);
     filterSortLayout->addStretch();
     Plasma::CheckBox* freezeSortCheck = new Plasma::CheckBox();
-    freezeSortCheck->setText(i18n("Freeze sort"));
     filterSortLayout->addItem(freezeSortCheck);
+    // Plasma::CheckBox::setText seems to be broken in KDE 4.4. (Worked fine in 4.3.)
+    // So use a label for the checkbox instead.
+    Plasma::Label* freezeSortLabel = new Plasma::Label();
+    freezeSortLabel->setText(i18n("Freeze sort"));
+    freezeSortLabel->nativeWidget()->setWordWrap(false);
+    filterSortLayout->addItem(freezeSortLabel);
     filterSortWidget->setLayout(filterSortLayout);
     _topmostLayout->addItem(filterSortWidget);
 
@@ -90,6 +98,26 @@ NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     _errorLabel->setAlignment(Qt::AlignHCenter);
     _errorLabel->hide();
 
+    updateStyle();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateStyle()));
+
+}
+
+void NetworkDeviceWidget::updateStyle() {
+    // Get theme colors
+    QColor textColor = Plasma::Theme::defaultTheme()->color( Plasma::Theme::TextColor );
+    QColor baseColor = Plasma::Theme::defaultTheme()->color( Plasma::Theme::BackgroundColor );
+    QColor buttonColor = Plasma::Theme::defaultTheme()->color( Plasma::Theme::BackgroundColor );
+    buttonColor.setAlpha(130);
+
+    QPalette p = palette();
+    p.setColor( QPalette::Background, baseColor );
+    p.setColor( QPalette::Base, baseColor );
+    p.setColor( QPalette::Button, buttonColor );
+    p.setColor( QPalette::Foreground, textColor );
+    p.setColor( QPalette::Text, textColor );
+    p.setColor( QPalette::ButtonText, textColor );
+    setPalette(p);
 }
 
 QStringList NetworkDeviceWidget::getFullColumnNames() const {

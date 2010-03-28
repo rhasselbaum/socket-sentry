@@ -66,6 +66,9 @@ public slots:
     Q_NOREPLY void showInterest(const QString& device);
     QStringList findDevices(const QDBusMessage &msg) const;
 
+    // This method simply returns true. Clients can call it to ensure the service is up.
+    bool ping() const { return true; }
+
 signals:
     // Traffic update for the specified device.
     void update(const QString& device, const QList<CommunicationFlow>& flows);

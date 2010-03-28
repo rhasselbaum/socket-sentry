@@ -74,6 +74,9 @@ public slots:
     // this widget's device.
     void deviceFailed(const QString& deviceName, const QString& error);
 
+    // Initialize the control palette from the Plasma theme.
+    void updateStyle();
+
 private:
     // Set the title text based on the device name.
     void updateTitle();
