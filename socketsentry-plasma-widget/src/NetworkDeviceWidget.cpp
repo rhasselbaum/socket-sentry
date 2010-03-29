@@ -25,7 +25,6 @@
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QAbstractButton>
 #include <QtGui/QLabel>
-#include <QtGui/QPalette>
 #include <QtCore/QList>
 #include <KDE/KLineEdit>
 
@@ -33,8 +32,6 @@
 #include <Plasma/LineEdit>
 #include <Plasma/CheckBox>
 #include <Plasma/Frame>
-#include <Plasma/Theme>
-
 
 NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     QGraphicsWidget(parent), _titleFrame(NULL), _mainWidgetIndex(-1), _flowView(NULL), _errorLabel(NULL), _topmostLayout(NULL) {
@@ -94,26 +91,6 @@ NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     _errorLabel->setAlignment(Qt::AlignHCenter);
     _errorLabel->hide();
 
-    updateStyle();
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateStyle()));
-
-}
-
-void NetworkDeviceWidget::updateStyle() {
-    // Get theme colors
-    QColor textColor = Plasma::Theme::defaultTheme()->color( Plasma::Theme::TextColor );
-    QColor baseColor = Plasma::Theme::defaultTheme()->color( Plasma::Theme::BackgroundColor );
-    QColor buttonColor = Plasma::Theme::defaultTheme()->color( Plasma::Theme::BackgroundColor );
-    buttonColor.setAlpha(130);
-
-    QPalette p = palette();
-    p.setColor( QPalette::Background, baseColor );
-    p.setColor( QPalette::Base, baseColor );
-    p.setColor( QPalette::Button, buttonColor );
-    p.setColor( QPalette::Foreground, textColor );
-    p.setColor( QPalette::Text, textColor );
-    p.setColor( QPalette::ButtonText, textColor );
-    setPalette(p);
 }
 
 QStringList NetworkDeviceWidget::getFullColumnNames() const {
