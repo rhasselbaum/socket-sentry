@@ -56,13 +56,9 @@ NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     filterSortLayout->addItem(filterEdit);
     filterSortLayout->addStretch();
     Plasma::CheckBox* freezeSortCheck = new Plasma::CheckBox();
+    freezeSortCheck->setText(i18n("Freeze sort"));
+    freezeSortCheck->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);     // needed for KDE 4.4 or label gets cut off
     filterSortLayout->addItem(freezeSortCheck);
-    // Plasma::CheckBox::setText seems to be broken in KDE 4.4. (Worked fine in 4.3.)
-    // So use a label for the checkbox instead.
-    Plasma::Label* freezeSortLabel = new Plasma::Label();
-    freezeSortLabel->setText(i18n("Freeze sort"));
-    freezeSortLabel->nativeWidget()->setWordWrap(false);
-    filterSortLayout->addItem(freezeSortLabel);
     filterSortWidget->setLayout(filterSortLayout);
     _topmostLayout->addItem(filterSortWidget);
 
