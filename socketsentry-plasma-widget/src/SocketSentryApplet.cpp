@@ -35,7 +35,7 @@ const char* SocketSentryApplet::CUSTOM_FILTER_PROPERTY = "customFilter";
 
 SocketSentryApplet::SocketSentryApplet(QObject* parent, const QVariantList& args) :
     Plasma::PopupApplet(parent, args), _mainWidget(NULL), _dataEngine(NULL), _localSettings(NULL), _globalSettings(NULL) {
-
+    setPassivePopup(true);
 }
 
 SocketSentryApplet::~SocketSentryApplet() {

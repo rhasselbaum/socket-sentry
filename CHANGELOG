@@ -2,7 +2,9 @@ Socket Sentry changelog
 
 0.9.2
 ===================
-* FIXED issue #2 in which the applet fails with an error if IPv6 is disabled.
+* Issue #4: CHANGED popup mode to passive so popup remains open until
+  explicitly dismissed by the user.
+* Issue #2: FIXED applet failing with an error if IPv6 is disabled.
 
 0.9.1 - 28-Mar-2010
 ===================
