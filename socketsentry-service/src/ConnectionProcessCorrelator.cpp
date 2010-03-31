@@ -95,10 +95,13 @@ bool ConnectionProcessCorrelator::correlate(QHash<IpEndpointPair, QList<OsProces
     // Get current connections by inode.
     QHash<int, IpEndpointPair> endpointsByInode;
     bool ok = findInodes(_tcp4Path, TCP, endpointsByInode, error)
-            && findInodes(_tcp6Path, TCP6, endpointsByInode, error)
-            && findInodes(_udp4Path, UDP, endpointsByInode, error)
-            && findInodes(_udp6Path, UDP6, endpointsByInode, error);
+            && findInodes(_udp4Path, UDP, endpointsByInode, error);
     if (!ok) return false;
+    // IPv6 might not be available, so we don't report an error if we're unable to get this data.
+    QString ignored;
+    findInodes(_tcp6Path, TCP6, endpointsByInode, ignored);
+    findInodes(_udp6Path, UDP6, endpointsByInode, ignored);
+
     // Find related sockets and processes.
     ok = findProcessSockets(endpointsByInode, result, error);
     if (!ok) return false;
