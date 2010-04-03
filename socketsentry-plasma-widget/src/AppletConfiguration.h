@@ -45,6 +45,9 @@ public:
     QString getSelectedDevice() const { return _d->selectedDevice; }
     void setSelectedDevice(const QString& selectedDevice) { _d->selectedDevice = selectedDevice; }
 
+    // Return true if the selected device is the default pseudo-device, which captures traffic on all interfaces.
+    bool isDefaultDevice() const { return _d->selectedDevice == DEFAULT_DEVICE_NAME; }
+
     // Size of each column in the flow table. Callers should check the return value against the expected number of
     // table columns and discard the setting here if they don't match. This could happen if no sizes have been
     // persisted or a new applet version changes the number of columns.
@@ -116,6 +119,9 @@ private:
     static const QString CUSTOM_FILTER;
     static const QString SHOW_SUBDOMAIN_LEVELS;
     static const QString AGGREGATION_MODE;
+
+    // Name of the default pseudo-device, which captures traffic on all interfaces.
+    static const QString DEFAULT_DEVICE_NAME;
 };
 
 #endif /* APPLETCONFIGURATION_H_ */

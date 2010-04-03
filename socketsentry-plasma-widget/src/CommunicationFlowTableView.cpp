@@ -27,7 +27,7 @@
 #include <Plasma/Theme>
 
 CommunicationFlowTableView::CommunicationFlowTableView(QGraphicsWidget* parent) :
-    Plasma::TreeView(parent), _contextMenu(NULL), _columnsSized(false), _appliedColumnHiding(false) {
+    Plasma::TreeView(parent), _contextMenu(NULL), _columnsSized(false) {
 
     QTreeView* nativeTree = nativeWidget();
     nativeTree->setSortingEnabled(true);
@@ -84,6 +84,20 @@ void CommunicationFlowTableView::setModel(QAbstractItemModel* model) {
     nativeWidget()->header()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(nativeWidget()->header(), SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(showContextMenu(const QPoint&)));
+
+    // Only certain columns are visible by default.
+    for (int i = 0; i < CommunicationFlowTableModel::ColumnCount; i++) {
+        switch (i) {
+        case CommunicationFlowTableModel::DeviceStateColumn:
+        case CommunicationFlowTableModel::ProcessOrProgramColumn:
+        case CommunicationFlowTableModel::RateColumn:
+        case CommunicationFlowTableModel::RemoteHostColumn:
+            break;
+        default:
+            nativeWidget()->setColumnHidden(i, true);
+        }
+    }
+
 }
 
 void CommunicationFlowTableView::showContextMenu(const QPoint& pos) {
@@ -119,21 +133,6 @@ void CommunicationFlowTableView::tick() {
         }
         _columnsSized = true;
     }
-    if (!_appliedColumnHiding) {
-        // Only certain columns are visible by default.
-        for (int i = 0; i < CommunicationFlowTableModel::ColumnCount; i++) {
-            switch (i) {
-            case CommunicationFlowTableModel::DeviceStateColumn:
-            case CommunicationFlowTableModel::ProcessOrProgramColumn:
-            case CommunicationFlowTableModel::RateColumn:
-            case CommunicationFlowTableModel::RemoteHostColumn:
-                break;
-            default:
-                nativeWidget()->setColumnHidden(i, true);
-            }
-        }
-        _appliedColumnHiding = true;
-    }
 }
 
 void CommunicationFlowTableView::readConfiguration(const AppletConfiguration& newConfig) {
@@ -156,7 +155,6 @@ void CommunicationFlowTableView::readConfiguration(const AppletConfiguration& ne
                 nativeWidget()->resizeColumnToContents(i);
             }
         }
-        _appliedColumnHiding = true;
     }
     // Reorder columns by new visual index.
     QList<int> visualIndices = newConfig.getFlowTableVisualIndices();

@@ -104,7 +104,17 @@ void SocketSentryApplet::init() {
                     _mainWidget, SIGNAL(configurationSaveRequested(AppletConfiguration&)));
             connect(this, SIGNAL(configurationSaveRequested(AppletConfiguration&)),
                     this, SLOT(importEngineConfiguration()));
+            connect(_mainWidget, SIGNAL(configurationInterfaceRequested()),
+                    this, SLOT(showConfigurationInterface()));
             emit appletConfigurationChanged(_appletConfig);
+
+            QString selectedDevice = _appletConfig.getSelectedDevice();
+            if (!devices.contains(selectedDevice) && _appletConfig.isDefaultDevice()) {
+                // Default device doesn't exist. This happens if there is no pseudo-device available to
+                // capture on all interfaces, so ask the user to pick a deivce.
+                QString msg = i18n("Please select a device to monitor in the configuration dialog.");
+                _mainWidget->deviceFailed(selectedDevice, msg);
+            }
         }
     }
 }

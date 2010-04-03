@@ -21,6 +21,7 @@
 #include <QtGui/QGraphicsWidget>
 #include <QtCore/QString>
 
+class ErrorWidget;
 class QGraphicsItem;
 class AppletConfiguration;
 class QGraphicsLinearLayout;
@@ -33,7 +34,6 @@ template <class T> class QSet;
 
 namespace Plasma {
     class Frame;
-    class Label;
 }
 
 /*
@@ -62,6 +62,9 @@ signals:
     // Emitted whenever the model and view must save their state.
     void configurationSaveRequested(AppletConfiguration& config);
 
+    // Emitted when the user has requested the configuration interface.
+    void configurationInterfaceRequested();
+
 public slots:
     // Updates this widget and it's children to reflect configuration changes.
     void readConfiguration(const AppletConfiguration& newConfig);
@@ -75,8 +78,10 @@ public slots:
     void deviceFailed(const QString& deviceName, const QString& error);
 
 private:
-    // Set the title text based on the device name.
-    void updateTitle();
+    // Set the title text. If the device is the default pseudo-device that captures traffic on all interfaces
+    // as indicated by the argument, then the device name is excluded from the title. Else, the title mentions
+    // the current device by name.
+    void updateTitle(bool defaultDeviceSelected);
 
     // Switch between displaying the flow view and the error label.
     void swapMainWidgets();
@@ -93,8 +98,8 @@ private:
     // Device name for display or empty if unspecified.
     QString _deviceName;
 
-    // Error label shown in case of a failure.
-    Plasma::Label* _errorLabel;
+    // Error widget shown in case of a failure.
+    ErrorWidget* _errorWidget;
 
     // Layout of this widget.
     QGraphicsLinearLayout* _topmostLayout;

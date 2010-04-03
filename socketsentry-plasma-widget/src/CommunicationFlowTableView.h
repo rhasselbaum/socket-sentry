@@ -66,9 +66,6 @@ private:
     // True if columns have been sized as a result of explicit configuration or default sizes having been applied.
     bool _columnsSized;
 
-    // True if column hiding has been applied as a result of explicit configuration or default policy.
-    bool _appliedColumnHiding;
-
 };
 
 #endif /* COMMUNICATIONFLOWTABLEVIEW_H_ */

@@ -21,10 +21,12 @@
 #include "CommunicationFlowTableView.h"
 #include "CommunicationFlowTableModel.h"
 #include "CommunicationFlowSortFilterProxyModel.h"
+#include "ErrorWidget.h"
 
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QAbstractButton>
 #include <QtGui/QLabel>
+#include <QtGui/QGraphicsWidget>
 #include <QtCore/QList>
 #include <KDE/KLineEdit>
 
@@ -34,7 +36,7 @@
 #include <Plasma/Frame>
 
 NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
-    QGraphicsWidget(parent), _titleFrame(NULL), _mainWidgetIndex(-1), _flowView(NULL), _errorLabel(NULL), _topmostLayout(NULL) {
+    QGraphicsWidget(parent), _titleFrame(NULL), _mainWidgetIndex(-1), _flowView(NULL), _errorWidget(NULL), _topmostLayout(NULL) {
 
     // Add title frame.
     _topmostLayout = new QGraphicsLinearLayout(Qt::Vertical);
@@ -85,11 +87,10 @@ NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     _mainWidgetIndex = _topmostLayout->count() - 1;
     setLayout(_topmostLayout);
 
-    //  Add the error label, parented by this widget, but hidden and not added to the layout.
-    _errorLabel = new Plasma::Label();
-    _errorLabel->nativeWidget()->setWordWrap(true);
-    _errorLabel->setAlignment(Qt::AlignHCenter);
-    _errorLabel->hide();
+    // Create the error widget, but hidden and not added to the layout.
+    _errorWidget = new ErrorWidget();
+    _errorWidget->hide();
+    connect(_errorWidget, SIGNAL(configButtonClicked()), this, SIGNAL(configurationInterfaceRequested()));
 
 }
 
@@ -105,9 +106,9 @@ QStringList NetworkDeviceWidget::getFullColumnNames() const {
 NetworkDeviceWidget::~NetworkDeviceWidget() {
     // If either of these widgets is not currently in the layout, we own them and need to
     // delete them. Else, the layout will take care of them.
-    if (!_errorLabel->isVisible()) {
-        delete _errorLabel;
-        _errorLabel = NULL;
+    if (!_errorWidget->isVisible()) {
+        delete _errorWidget;
+        _errorWidget = NULL;
     }
     if (!_flowView->isVisible()) {
         delete _flowView;
@@ -115,9 +116,9 @@ NetworkDeviceWidget::~NetworkDeviceWidget() {
     }
 }
 
-void NetworkDeviceWidget::updateTitle() {
+void NetworkDeviceWidget::updateTitle(bool defaultDeviceSelected) {
     if (_titleFrame) {
-        if (_deviceName.isEmpty() || _deviceName == "any") {
+        if (_deviceName.isEmpty() || defaultDeviceSelected) {
             _titleFrame->setText(i18n("Network traffic"));
         } else {
             _titleFrame->setText(i18n("Network traffic on %1").arg(_deviceName));
@@ -129,27 +130,27 @@ void NetworkDeviceWidget::updateTitle() {
 void NetworkDeviceWidget::readConfiguration(const AppletConfiguration& newConfig) {
     if (_deviceName != newConfig.getSelectedDevice()) {
         _deviceName = newConfig.getSelectedDevice();
-        updateTitle();
+        updateTitle(newConfig.isDefaultDevice());
     }
     emit configurationChanged(newConfig);
 }
 
 void NetworkDeviceWidget::deviceUpdated(const QString& deviceName, const QList<CommunicationFlow>& allFlows) {
     if (deviceName == _deviceName) {
-        _errorLabel->setText(QString());    // clear any error
         if (!_flowView->isVisible()) {
             swapMainWidgets();  // show the flow view
         }
+        _errorWidget->setText(QString());    // clear any error
         emit processFlowUpdate(allFlows);
      }
 }
 
 void NetworkDeviceWidget::deviceFailed(const QString& deviceName, const QString& error) {
     if (deviceName == _deviceName) {
-        _errorLabel->setText(error);    // update error text
-        if (!_errorLabel->isVisible()) {
+        if (!_errorWidget->isVisible()) {
             swapMainWidgets();  // show the error label
         }
+        _errorWidget->setText(error);    // update error text
     }
 }
 
@@ -161,9 +162,9 @@ void NetworkDeviceWidget::swapMainWidgets() {
     QGraphicsWidget* newBackgroundWidget = NULL;
     if (!_flowView->isVisible()) {
         newForegroundWidget = _flowView;
-        newBackgroundWidget = _errorLabel;
+        newBackgroundWidget = _errorWidget;
     } else {
-        newForegroundWidget = _errorLabel;
+        newForegroundWidget = _errorWidget;
         newBackgroundWidget = _flowView;
     }
     // Hide and remove new background widget.

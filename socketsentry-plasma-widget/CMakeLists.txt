@@ -41,6 +41,7 @@ set (SsPlasmaWidget_SRCS
 	src/LocalSettingsUi.cpp
 	src/GlobalSettingsUi.cpp
 	src/ColumnListWidgetItem.cpp
+	src/ErrorWidget.cpp
 )
 
 kde4_add_ui_files (SsPlasmaWidget_SRCS

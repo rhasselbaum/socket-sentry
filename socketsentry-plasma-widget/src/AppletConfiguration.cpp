@@ -31,6 +31,8 @@ const QString AppletConfiguration::CUSTOM_FILTER = "customFilter";
 const QString AppletConfiguration::SHOW_SUBDOMAIN_LEVELS = "showSubdomainLevels";
 const QString AppletConfiguration::AGGREGATION_MODE = "aggregationMode";
 
+// Name of the default pseudo-device, which captures traffic on all interfaces.
+const QString AppletConfiguration::DEFAULT_DEVICE_NAME = "any";
 
 AppletConfiguration::AppletConfiguration() {
     _d = new AppletConfigurationData();
@@ -41,7 +43,7 @@ AppletConfiguration::~AppletConfiguration() {
 
 void AppletConfiguration::importConfig(const KConfigGroup& localConfig, const KConfigGroup& globalConfig) {
     // Local config.
-    _d->selectedDevice = localConfig.readEntry(SELECTED_DEVICE, "any");
+    _d->selectedDevice = localConfig.readEntry(SELECTED_DEVICE, DEFAULT_DEVICE_NAME);
     _d->flowTableColumnSizes = localConfig.readEntry(FLOW_TABLE_COLUMN_SIZES, QList<int>());
     _d->flowTableHiddenColumns = localConfig.readEntry(FLOW_TABLE_HIDDEN_COLUMNS, QList<bool>());
     _d->flowTableVisualIndices = localConfig.readEntry(FLOW_TABLE_VISUAL_INDICES, QList<int>());

@@ -4,6 +4,8 @@ Socket Sentry changelog
 ===================
 * Issue #4: CHANGED popup mode to passive so popup remains open until
   explicitly dismissed by the user.
+* Issue #1: CHANGED applet to prompt the user to select a device if the
+  default ("any") pseudo-device is not available.
 * Issue #2: FIXED applet failing with an error if IPv6 is disabled.
 
 0.9.1 - 28-Mar-2010
