@@ -18,11 +18,10 @@
 #include "HostNameResolver.h"
 #include "DateTimeUtils.h"
 
-#include <QtCore/QTimerEvent>
-#include <QtCore/QMutableMapIterator>
+#include <QtCore/QSet>
+#include <QtCore/QString>
+#include <QtCore/QVariant>
 #include <QtNetwork/QHostInfo>
-#include <QtCore/QListIterator>
-
 
 // Default maximum number of cached addresses.
 const uint HostNameResolver::DEFAULT_MAX_SIZE = 500;
@@ -30,43 +29,17 @@ const uint HostNameResolver::DEFAULT_MAX_SIZE = 500;
 // Default age in seconds of a cache entry before it is eligible for eviction.
 const uint HostNameResolver::DEFAULT_MAX_AGE_SECS = 60 * 60 * 3;    // 3 hours
 
-// Default interval between time-based eviction sweeps.
-const uint HostNameResolver::DEFAULT_TIMER_INTERVAL_MS = 300000;   // 5 min
-
-// Default percentage of entries to retain when reducing cache size after it hits the maximum.
-// Value must be between 0 and 99.
-const uint HostNameResolver::DEFAULT_RETENTION_PERCENT = 80;
-
 HostNameResolver::HostNameResolver() :
-    _maxSize(DEFAULT_MAX_SIZE), _maxAgeSecs(DEFAULT_MAX_AGE_SECS), _timerIntervalMs(DEFAULT_TIMER_INTERVAL_MS),
-    _retentionPercent(DEFAULT_RETENTION_PERCENT) {
-    startTimer(_timerIntervalMs);
+    _cache(DEFAULT_MAX_SIZE, DEFAULT_MAX_AGE_SECS) {
+    connect(&_cache, SIGNAL(evicted(const QSet<QString>&)), this, SLOT(cacheEntriesEvicted(const QSet<QString>&)));
 }
 
 HostNameResolver::HostNameResolver(uint maxSize, uint maxAgeSecs, uint timerIntervalMs, uint retentionPercent) :
-    _maxSize(maxSize), _maxAgeSecs(maxAgeSecs), _timerIntervalMs(timerIntervalMs), _retentionPercent(retentionPercent) {
-    startTimer(_timerIntervalMs);
+    _cache(maxSize, maxAgeSecs, timerIntervalMs, retentionPercent) {
+    connect(&_cache, SIGNAL(evicted(const QSet<QString>&)), this, SLOT(cacheEntriesEvicted(const QSet<QString>&)));
 }
 
 HostNameResolver::~HostNameResolver() {
-}
-
-void HostNameResolver::timerEvent(QTimerEvent* event) {
-    qlonglong nowMs = DateTimeUtils::currentTimeMs();
-    // Look for cache entries that are older than the maximum allowed age and remove them from this resolver.
-    // The map is ordered by request time, so as soon as we see an entry that's not old, we can stop.
-    QMutableMapIterator<qlonglong, QString> iter(_addressesByRequestTimeMs);
-    while (iter.hasNext()) {
-        iter.next();
-        qlonglong requestTimeMs = iter.key();
-        if (requestTimeMs + (_maxAgeSecs * 1000) <= nowMs) {
-            // Entry is too old.
-            evictCurrent(iter);
-        } else {
-            // Remaining entries are new enough to avoid eviction.
-            break;
-        }
-    }
 }
 
 void HostNameResolver::lookedUp(const QHostInfo& hostInfo) {
@@ -78,7 +51,7 @@ void HostNameResolver::lookedUp(const QHostInfo& hostInfo) {
             QString hostName = hostInfo.hostName();
             if (hostAddress != hostName) {
                 // Update the name table.
-                _nameTable.insert(hostAddress, hostName);
+                _cache.passiveUpdate(hostAddress, hostName);
             }
         }
         // Remove lookup ID from hash tables b/c we're done with it now.
@@ -92,19 +65,14 @@ int HostNameResolver::resolveAsync(const QString& hostAddress) {
 }
 
 QString HostNameResolver::resolve(const QString& hostAddress) {
-    if (_nameTable.contains(hostAddress)) {
+    if (_cache.contains(hostAddress)) {
         // Cache hit.
-        return _nameTable[hostAddress];
+        return _cache.value(hostAddress).toString();
     } else {
-        // Cache miss. We'll add it now.
-        if (_addressesByRequestTimeMs.size() >= _maxSize) {
-            // Cache full. Cut it down.
-            reduceSize();
-        }
-        // Create entries in the name table and address by request time map.
-        qlonglong nowMs = DateTimeUtils::currentTimeMs();
-        QString empty = _nameTable[hostAddress];    // adds new entry
-        _addressesByRequestTimeMs.insert(nowMs, hostAddress);
+        // Cache miss. We'll look it up asynchronously and add it to the cache so we don't try to look it up more
+        // than once.
+        QString empty;  // default name
+        _cache.insertNew(hostAddress, empty);
         // Now schedule address for resolution and store off the lookup ID.
         int lookupId = resolveAsync(hostAddress);
         _addressByLookupId.insert(lookupId, hostAddress);
@@ -114,31 +82,20 @@ QString HostNameResolver::resolve(const QString& hostAddress) {
 }
 
 QString HostNameResolver::softResolve(const QString& hostAddress) const {
-    if (_nameTable.contains(hostAddress)) {
+    if (_cache.contains(hostAddress)) {
         // Cache hit.
-        return _nameTable[hostAddress];
+        return _cache.value(hostAddress).toString();
     } else {
         return "";
     }
 }
 
-void HostNameResolver::reduceSize() {
-    Q_ASSERT(_retentionPercent >= 0 && _retentionPercent < 100);
-    const uint newSize = _maxSize * _retentionPercent / 100;
-    QMutableMapIterator<qlonglong, QString> iter(_addressesByRequestTimeMs);
-    while(iter.hasNext() && _nameTable.size() > newSize) {
-        iter.next();
-        evictCurrent(iter);
+void HostNameResolver::cacheEntriesEvicted(const QSet<QString>& addresses) {
+    foreach (const QString& hostAddress, addresses) {
+        if (_lookupIdByAddress.contains(hostAddress)) {
+            int lookupId = _lookupIdByAddress[hostAddress];
+            _lookupIdByAddress.remove(hostAddress);
+            _addressByLookupId.remove(lookupId);
+        }
     }
-}
-
-void HostNameResolver::evictCurrent(QMutableMapIterator<qlonglong, QString>& iter) {
-    QString hostAddress = iter.value();
-    _nameTable.remove(hostAddress);
-    if (_lookupIdByAddress.contains(hostAddress)) {
-        int lookupId = _lookupIdByAddress[hostAddress];
-        _lookupIdByAddress.remove(hostAddress);
-        _addressByLookupId.remove(lookupId);
-    }
-    iter.remove();
 }

@@ -15,7 +15,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>   *
  ***************************************************************************/
 
-#include "HostNameResolverTest.h"
+#include "HostNameCachingTest.h"
 #include "HostNameResolver.h"
 
 #include <QtTest/QtTest>
@@ -36,13 +36,13 @@ private:
     int _lookupCounter;
 };
 
-HostNameResolverTest::HostNameResolverTest() {
+HostNameCachingTest::HostNameCachingTest() {
 }
 
-HostNameResolverTest::~HostNameResolverTest() {
+HostNameCachingTest::~HostNameCachingTest() {
 }
 
-void HostNameResolverTest::testLookup() {
+void HostNameCachingTest::testLookup() {
     UnitTestHostNameResolver resolver(5, 1, 0, 50);     // cache is big enough to hold all our test hosts
 
     // Normal resolution.
@@ -81,7 +81,7 @@ void HostNameResolverTest::testLookup() {
 
 }
 
-void HostNameResolverTest::testExpireBySize() {
+void HostNameCachingTest::testExpireBySize() {
     // Make cache hold 4, retains 50% after hitting max size, and don't expire entries based on time.
     UnitTestHostNameResolver resolver(4, 300, 0, 50);
 
@@ -131,7 +131,7 @@ void HostNameResolverTest::testExpireBySize() {
 
 }
 
-void HostNameResolverTest::testExpireByTime() {
+void HostNameCachingTest::testExpireByTime() {
     // Make cache expire entries after 1 second.
     UnitTestHostNameResolver resolver(5, 1, 50, 50);
 
@@ -164,14 +164,14 @@ void HostNameResolverTest::testExpireByTime() {
 
 }
 
-void HostNameResolverTest::autoResolve(UnitTestHostNameResolver& resolver, int lookupId,
+void HostNameCachingTest::autoResolve(UnitTestHostNameResolver& resolver, int lookupId,
         const QString& address, const QString& name) const {
     resolver.resolve(address);
     QHostInfo result = createHostInfo(lookupId, QHostInfo::NoError, name);
     resolver.lookedUp(result);
 }
 
-QHostInfo HostNameResolverTest::createHostInfo(int lookupId, QHostInfo::HostInfoError error, const QString& name) const {
+QHostInfo HostNameCachingTest::createHostInfo(int lookupId, QHostInfo::HostInfoError error, const QString& name) const {
     QHostInfo result;
     result.setLookupId(lookupId);
     result.setError(error);
@@ -179,4 +179,4 @@ QHostInfo HostNameResolverTest::createHostInfo(int lookupId, QHostInfo::HostInfo
     return result;
 }
 
-QTEST_MAIN(HostNameResolverTest)
+QTEST_MAIN(HostNameCachingTest)

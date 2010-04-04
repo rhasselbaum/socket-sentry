@@ -24,14 +24,15 @@
 class UnitTestHostNameResolver;
 
 /*
- * Unit test for HostNameResolver.
+ * Unit test for HostNameResolver and TimeLimitedCache. If the capabilities of TimeLimitedCache grows beyond what's
+ * required by the resolver, it should be split out into its own unit test. But now now, this is fine.
  */
-class HostNameResolverTest : public QObject {
+class HostNameCachingTest : public QObject {
     Q_OBJECT
 
 public:
-    HostNameResolverTest();
-    virtual ~HostNameResolverTest();
+    HostNameCachingTest();
+    virtual ~HostNameCachingTest();
 
 private slots:
     // Test basic lookups and caching.

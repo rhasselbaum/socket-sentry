@@ -18,13 +18,15 @@
 #ifndef HOSTNAMERESOLVER_H_
 #define HOSTNAMERESOLVER_H_
 
+#include "TimeLimitedCache.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QMap>
 #include <QtCore/QMultiMap>
 #include <QtCore/QHash>
 
-class QTimerEvent;
 class QHostInfo;
+template <class E> class QSet;
 
 /*
  * Performs asynchronous lookups of hostnames by IP address and caches the results for a period of time. Entries remain
@@ -47,7 +49,7 @@ public:
     QString softResolve(const QString& hostAddress) const;
 
     // Get the current number of entries in the cache.
-    int getCacheSize() const { return _nameTable.size(); }
+    int getCacheSize() const { return _cache.size(); }
 
     // Get the current number of asynchronous lookups in progress.
     int getPendingLookups() const { return _addressByLookupId.size(); }
@@ -61,52 +63,23 @@ protected:
     // New instance with the given maximum cache size, maximum age of entries, timer interval, and retention percent values.
     HostNameResolver(uint maxSize, uint maxAgeSecs, uint timerIntervalMs, uint retentionPercent);
 
-    // Timer event for time-based eviction sweeps.
-    void timerEvent(QTimerEvent* event);
-
     // Resolve host name asynchronously. The Qt lookup ID is returned, which may be used to match the response when it
     // arrives. This method can be overridden in unit test subclasses to mock out the actual host name lookup.
     virtual int resolveAsync(const QString& hostAddress);
 
+private slots:
+    // Invoked when IP address-name pairs are evicted from the cache.
+    void cacheEntriesEvicted(const QSet<QString>& addresses);
+
 private:
-    // Reduce the size of the cache to "retention %" of maximum. Oldest entries are removed first.
-    void reduceSize();
-
-    // Remove the current item from the address-by-lookup-time iterator and all other internal data structures.
-    void evictCurrent(QMutableMapIterator<qlonglong, QString>& iter);
-
     // Default maximum number of cached addresses.
     static const uint DEFAULT_MAX_SIZE;
 
     // Default age in seconds of a cache entry before it is eligible for eviction.
     static const uint DEFAULT_MAX_AGE_SECS;
 
-    // Default interval between time-based eviction sweeps.
-    static const uint DEFAULT_TIMER_INTERVAL_MS;
-
-    // Default percentage of entries to retain when reducing cache size after it hits the maximum.
-    // Value must be between 0 and 99.
-    static const uint DEFAULT_RETENTION_PERCENT;
-
-    // The maximum number of cached addresses.
-    const uint _maxSize;
-
-    // The age in seconds of a cache entry before it is eligible for eviction. Should be less than the typical DNS TTL.
-    const uint _maxAgeSecs;
-
-    // Interval between time-based eviction sweeps.
-    const uint _timerIntervalMs;
-
-    // Percentage of entries to retain when reducing cache size after it hits the maximum. Value must be between 0 and 99.
-    // A value of 80 means 80% of entries are retained and 20% are removed when the cache size hits the maximum to make
-    // room for new entries.
-    const uint _retentionPercent;
-
-    // Table of IP address strings to resolved names. If the name isn't resolved yet, the value is an empty string.
-    QHash<QString, QString> _nameTable;
-
-    // Map of lookup request times to IP address.
-    QMultiMap<qlonglong, QString> _addressesByRequestTimeMs;
+    // Cache of IP addresses to resoled host names.
+    TimeLimitedCache _cache;
 
     // Table of QHostInfo lookup IDs to IP address.
     QHash<int, QString> _addressByLookupId;

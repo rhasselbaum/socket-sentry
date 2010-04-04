@@ -35,6 +35,7 @@ set (SsService_MOC_HEADERS
 	src/WatcherDBusAdaptor.h
 	src/PcapManager.h
 	src/HostNameResolver.h
+	src/TimeLimitedCache.h
 )
 
 # QObject-derived class headers (client side)
@@ -75,6 +76,7 @@ set (SsService_SRCS
 	src/HostNameResolver.cpp
 	src/Latch.cpp
 	src/LogSettings.cpp
+	src/TimeLimitedCache.cpp
 )
 
 # Client library sources (no main function)
@@ -92,7 +94,7 @@ set (SsService_TEST_SRCS
 	test/WatcherTest.cpp
 	test/PcapManagerTest.cpp
 	test/HostAddressUtilsTest.cpp
-	test/HostNameResolverTest.cpp
+	test/HostNameCachingTest.cpp
 )
 
 # Create the service static lib.
