@@ -99,11 +99,12 @@ set (SsService_TEST_SRCS
 qt4_wrap_cpp (SsService_MOC_OUTFILES ${SsService_MOC_HEADERS})
 set (SsService_ALL_SRCS ${SsService_SRCS} ${SsService_MOC_OUTFILES} ${SsCommon_SRCS})
 add_library (socksent-service-common STATIC ${SsService_ALL_SRCS})
+target_link_libraries (socksent-service-common ${QT_LIBRARIES} ${PCAP})
 
 # Create the service executable.
 set (SS_SERVICE_EXE socksent-service)
 add_executable (${SS_SERVICE_EXE} src/SsService.cpp)
-target_link_libraries (${SS_SERVICE_EXE} socksent-service-common ${QT_LIBRARIES} ${PCAP})
+target_link_libraries (${SS_SERVICE_EXE} socksent-service-common)
 install (TARGETS ${SS_SERVICE_EXE} DESTINATION bin)
 
 # Install the D-Bus system bus config file.
@@ -123,17 +124,18 @@ configure_file (${WATCHER_SERVICE_FILE}.in ${CMAKE_CURRENT_BINARY_DIR}/${WATCHER
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${WATCHER_SERVICE_FILE} DESTINATION ${DBUS_SYSTEM_SERVICES_INSTALL_DIR})
 
 # Create the unit tests.
-add_qtestlib_tests ("${SsService_TEST_SRCS}" ${QT_LIBRARIES} ${PCAP} socksent-service-common)
+add_qtestlib_tests ("${SsService_TEST_SRCS}" socksent-service-common)
 
 # Create client shared lib. The lib directory will be the same as that used by pcap (e.g. lib64 or lib).
 get_filename_component(LIBRARY_OUTPUT_DIRECTORY ${PCAP} PATH)
 qt4_wrap_cpp (SsClientStub_MOC_OUTFILES ${SsClientStub_MOC_HEADERS})
 set (SsClientStub_ALL_SRCS ${SsClientStub_SRCS} ${SsClientStub_MOC_OUTFILES} ${SsCommon_SRCS})
 add_library (socketsent-client-common SHARED ${SsClientStub_ALL_SRCS})
+target_link_libraries (socketsent-client-common ${QT_LIBRARIES})
 set_target_properties(socketsent-client-common PROPERTIES VERSION ${SS_PROJECT_VERSION})
 install (TARGETS socketsent-client-common DESTINATION ${LIBRARY_OUTPUT_DIRECTORY})
 
 # Create the client test executable.
 add_executable (socksent-client src/SsReceiver.cpp)
-target_link_libraries (socksent-client socketsent-client-common ${QT_LIBRARIES})
+target_link_libraries (socksent-client socketsent-client-common)
 install (TARGETS socksent-client DESTINATION bin)
