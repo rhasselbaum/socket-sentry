@@ -24,7 +24,6 @@
 #include "LogSettings.h"
 
 #include <netinet/in.h>
-#include <pwd.h>
 
 #include <QtCore/QHash>
 #include <QtCore/QHashIterator>
@@ -90,7 +89,7 @@ ConnectionProcessCorrelator::ConnectionProcessCorrelator() :
 ConnectionProcessCorrelator::~ConnectionProcessCorrelator() {
 }
 
-bool ConnectionProcessCorrelator::correlate(QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error) const {
+bool ConnectionProcessCorrelator::correlate(QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error) {
 
     // Get current connections by inode.
     QHash<int, IpEndpointPair> endpointsByInode;
@@ -211,7 +210,7 @@ QHostAddress ConnectionProcessCorrelator::convertIpAddress(const QString& addres
 }
 
 bool ConnectionProcessCorrelator::findProcessSockets(const QHash<int, IpEndpointPair>& inodeConnections,
-        QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error) const {
+        QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error) {
 
     if (inodeConnections.isEmpty()) return true;     // no connections to be mapped
 
@@ -280,7 +279,7 @@ bool ConnectionProcessCorrelator::findProcessSockets(const QHash<int, IpEndpoint
     }
 }
 
-void ConnectionProcessCorrelator::populateProcess(quint32 pid, const QDateTime& startTime, OsProcess& result) const {
+void ConnectionProcessCorrelator::populateProcess(quint32 pid, const QDateTime& startTime, OsProcess& result) {
     result.setPid(pid);
     result.setStartTime(startTime);
     QFile file(STATUS_FILE_TEMPLATE.arg(pid));
@@ -294,11 +293,9 @@ void ConnectionProcessCorrelator::populateProcess(quint32 pid, const QDateTime& 
                 result.setProgram(_procNameRegex.cap(1));
                 foundName = true;
             } else if (!foundUid && _procUidRegex.indexIn(line) >= 0) {
-                uid_t uid = _procUidRegex.cap(1).toUInt();
-                passwd* userRec = ::getpwuid(uid);
-                if (userRec) {
-                    result.setUser(userRec->pw_name);
-                }
+                QString uid = _procUidRegex.cap(1);
+                QString username = _userNameResolver.resolve(uid);
+                result.setUser(username.isEmpty() ? uid : username);
                 foundUid = true;
             }
             line = in.readLine();

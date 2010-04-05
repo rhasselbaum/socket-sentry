@@ -20,6 +20,7 @@
 
 #include "CommonTypes.h"
 #include "IConnectionProcessCorrelator.h"
+#include "UserNameResolver.h"
 
 #include <QtCore/QRegExp>
 
@@ -40,7 +41,7 @@ public:
     virtual ~ConnectionProcessCorrelator();
 
     // This method implements behavior described in the interface.
-    virtual bool correlate(QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error) const;
+    virtual bool correlate(QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error);
 
 private:
     // Regex matches a line of data from /proc/net/tcp* and /proc/net/udp* and captures important fields.
@@ -115,11 +116,11 @@ private:
     // all of them in no particular order. The method returns true on success or false if it is unable to read any
     // process data. If false is returned, the error argument will be populated with a message.
     bool findProcessSockets(const QHash<int, IpEndpointPair>& inodeConnections, QHash<IpEndpointPair,
-            QList<OsProcess> >& result, QString& error) const;
+            QList<OsProcess> >& result, QString& error);
 
     // Given a process ID and start time, fill in an OS process object with details. This is best effort. If the process
     // details cannot be fetched from the OS, only the PID and start time are initialized (copied into) in the result.
-    void populateProcess(quint32 pid, const QDateTime& dateTime, OsProcess& result) const;
+    void populateProcess(quint32 pid, const QDateTime& dateTime, OsProcess& result);
 
     // Scan the input hash table for IPv6 endpoint pairs that actually represent IPv4 hosts mapped into the IPv6 address space.
     // For each such connection, add an equivalent IPv4 connection to the result correlated to the same processes.
@@ -131,6 +132,8 @@ private:
     // "isNull" method returns true.
     QHostAddress convertIpAddress(const QString& address) const;
 
+    // Process owner name resolver.
+    UserNameResolver _userNameResolver;
 
 };
 

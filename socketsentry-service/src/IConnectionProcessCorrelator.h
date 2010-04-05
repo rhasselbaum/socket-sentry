@@ -42,7 +42,7 @@ public:
     //
     // The caller supplies an empty result object to receive the output. It returns true on success. If it fails
     // to obtain the data it needs from the OS, it returns false and the error argument is populated with a message.
-    virtual bool correlate(QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error) const = 0;
+    virtual bool correlate(QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error) = 0;
 };
 
 #endif /* ICONNECTIONPROCESSCORRELATOR_H_ */

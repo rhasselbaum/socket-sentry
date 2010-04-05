@@ -77,6 +77,7 @@ set (SsService_SRCS
 	src/Latch.cpp
 	src/LogSettings.cpp
 	src/TimeLimitedCache.cpp
+	src/UserNameResolver.cpp
 )
 
 # Client library sources (no main function)
@@ -95,6 +96,7 @@ set (SsService_TEST_SRCS
 	test/PcapManagerTest.cpp
 	test/HostAddressUtilsTest.cpp
 	test/HostNameCachingTest.cpp
+	test/UserNameResolverTest.cpp
 )
 
 # Create the service static lib.

@@ -15,27 +15,33 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>   *
  ***************************************************************************/
 
+#ifndef USERNAMERESOLVERTEST_H_
+#define USERNAMERESOLVERTEST_H_
 
-#ifndef MOCKCONNECTIONPROCESSCORRELATOR_H_
-#define MOCKCONNECTIONPROCESSCORRELATOR_H_
+#include <QtCore/QObject>
 
-#include "IConnectionProcessCorrelator.h"
-
-#include "OsProcess.h"
-#include "IpEndpointPair.h"
-
-#include <QtCore/QString>
-#include <QtCore/QHash>
-#include <QtCore/QList>
-#include <QtCore/QPair>
-#include <gmock/gmock.h>
+class UnitTestUserNameResolver;
 
 /*
- * Mock.
+ * Unit test for UserNameResolver.
  */
-class MockConnectionProcessCorrelator : public IConnectionProcessCorrelator {
+class UserNameResolverTest : public QObject {
+    Q_OBJECT
+
 public:
-    MOCK_METHOD2(correlate, bool(QHash<IpEndpointPair, QList<OsProcess> >& result, QString& error));
+    UserNameResolverTest();
+    virtual ~UserNameResolverTest();
+
+    // Max age of cache entries.
+    static uint MAX_CACHE_ENTRY_AGE_SECS;
+
+private slots:
+    // Test lookup and caching.
+    void testLookup();
+
+private:
+    // Wait several seconds for an asynchronous result to be returned.
+    void waitForResult(UnitTestUserNameResolver& resolver, const QString& uid, const QString& expected);
 };
 
-#endif /* MOCKCONNECTIONPROCESSCORRELATOR_H_ */
+#endif /* USERNAMERESOLVERTEST_H_ */
