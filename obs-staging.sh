@@ -35,6 +35,9 @@ check_errs()
   fi
 }
 
+# Clear output directory.
+rm staging/*
+
 # Create pristine source tarball.
 VERSION=`cat VERSION`
 BASE_NAME=socketsentry-$VERSION
