@@ -55,9 +55,9 @@ check_errs $? "Can't generate spec file."
 
 # Create Debian files for Kubuntu.
 echo "Creating Debian changelog."
-sed <obs/debian.changelog -e s/@DEB_VERSION@/$VERSION-karmic1/g -e s/@DISTRO@/karmic/g >staging/debian.changelog
+sed <obs/debian.changelog -e s/@DEB_VERSION@/$VERSION-ubuntu1/g -e s/@DISTRO@/ubuntu/g >staging/debian.changelog
 echo "Creating Debian dsc."
-sed <obs/socketsentry.dsc -e s/@DEB_VERSION@/$VERSION-karmic1/g >staging/socketsentry.dsc
+sed <obs/socketsentry.dsc -e s/@DEB_VERSION@/$VERSION-ubuntu1/g >staging/socketsentry.dsc
 echo "Copying other Debian files."
 cp obs/debian.control obs/debian.rules obs/debian.postinst obs/debian.postrm staging
 
