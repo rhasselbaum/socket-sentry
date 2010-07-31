@@ -84,6 +84,10 @@ public:
     bool getOsProcessSortAscending() const { return _d->osProcessSortAscending; }
     void setOsProcessSortAscending(bool osProcessSortAscending) { _d->osProcessSortAscending = osProcessSortAscending; }
 
+    // True if the filter and sort toggle controls should be shown.
+    bool getShowFilterSortControls() const { return _d->showFilterSortControls; }
+    void setShowFilterSortControls(bool showFilterSortControls) { _d->showFilterSortControls = showFilterSortControls; }
+
     // Custom filter text in pcap syntax that is applied across devices.
     QString getCustomFilter() const { return _d->customFilter; }
     void setCustomFilter(QString customFilter) { _d->customFilter = customFilter; }
@@ -116,6 +120,7 @@ private:
     static const QString FLOW_TABLE_SORT_ORDER;
     static const QString RESOLVE_NAMES;
     static const QString OS_PROCESS_SORT_ASCENDING;
+    static const QString SHOW_FILTER_SORT_CONTROLS;
     static const QString CUSTOM_FILTER;
     static const QString SHOW_SUBDOMAIN_LEVELS;
     static const QString AGGREGATION_MODE;

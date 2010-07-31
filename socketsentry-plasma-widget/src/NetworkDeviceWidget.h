@@ -28,12 +28,15 @@ class QGraphicsLinearLayout;
 class CommunicationFlow;
 class CommunicationFlowTableView;
 class OsProcess;
+class QGraphicsLayoutItem;
 template <class K, class V> class QHash;
 template <class T> class QList;
 template <class T> class QSet;
 
 namespace Plasma {
     class Frame;
+    class LineEdit;
+    class CheckBox;
 }
 
 /*
@@ -51,6 +54,11 @@ public:
 
     // Get the canonical list of full column names available in the communication flow model.
     QStringList getFullColumnNames() const;
+
+    // Returns true if the quick filter-sort widget is visible.
+    bool isFilterSortVisible() const {
+        return _filterSortWidget->isVisible();
+    }
 
 signals:
     // Emitted when a new set of flows are available.
@@ -77,6 +85,9 @@ public slots:
     // this widget's device.
     void deviceFailed(const QString& deviceName, const QString& error);
 
+    // Show or hide the filter-sort controls.
+    void setFilterSortVisible(bool visible);
+
 private:
     // Set the title text. If the device is the default pseudo-device that captures traffic on all interfaces
     // as indicated by the argument, then the device name is excluded from the title. Else, the title mentions
@@ -86,11 +97,11 @@ private:
     // Switch between displaying the flow view and the error label.
     void swapMainWidgets();
 
+    // Return the index of the specified layout item in the topmost layout or -1 if the item is not in the layout.
+    int findLayoutItem(QGraphicsLayoutItem* item) const;
+
     // The title frame.
     Plasma::Frame* _titleFrame;
-
-    // Index of the main widget (either the flow view or the error label) in the layout.
-    int _mainWidgetIndex;
 
     // The flow view table.
     CommunicationFlowTableView* _flowView;
@@ -100,6 +111,15 @@ private:
 
     // Error widget shown in case of a failure.
     ErrorWidget* _errorWidget;
+
+    // Controls to filter and toggle sort on the flow table.
+    QGraphicsWidget* _filterSortWidget;
+
+    // The filter edit control.
+    Plasma::LineEdit* _filterEdit;
+
+    // The freeze sort toggle control.
+    Plasma::CheckBox* _freezeSortCheck;
 
     // Layout of this widget.
     QGraphicsLinearLayout* _topmostLayout;

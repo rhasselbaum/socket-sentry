@@ -27,6 +27,7 @@ const QString AppletConfiguration::FLOW_TABLE_SORT_COLUMN = "flowTableSortColumn
 const QString AppletConfiguration::FLOW_TABLE_SORT_ORDER = "flowTableSortOrder";
 const QString AppletConfiguration::RESOLVE_NAMES = "resolveNames";
 const QString AppletConfiguration::OS_PROCESS_SORT_ASCENDING = "osProcessSortAscending";
+const QString AppletConfiguration::SHOW_FILTER_SORT_CONTROLS = "showFilterSortControls";
 const QString AppletConfiguration::CUSTOM_FILTER = "customFilter";
 const QString AppletConfiguration::SHOW_SUBDOMAIN_LEVELS = "showSubdomainLevels";
 const QString AppletConfiguration::AGGREGATION_MODE = "aggregationMode";
@@ -50,6 +51,7 @@ void AppletConfiguration::importConfig(const KConfigGroup& localConfig, const KC
     _d->flowTableSortColumn = localConfig.readEntry(FLOW_TABLE_SORT_COLUMN, -1);
     _d->flowTableSortOrder = localConfig.readEntry(FLOW_TABLE_SORT_ORDER, true) ? Qt::AscendingOrder : Qt::DescendingOrder;
     _d->showSubdomainLevels = localConfig.readEntry(SHOW_SUBDOMAIN_LEVELS, 2);
+    _d->showFilterSortControls = localConfig.readEntry(SHOW_FILTER_SORT_CONTROLS, true);
 
     // Read and validate aggregation mode ordinal.
     int aggregationModeOrdinal = localConfig.readEntry(AGGREGATION_MODE, (int)HostPairProcess);
@@ -74,6 +76,7 @@ void AppletConfiguration::exportConfig(KConfigGroup& localConfig, KConfigGroup& 
     localConfig.writeEntry(FLOW_TABLE_SORT_COLUMN, _d->flowTableSortColumn);
     localConfig.writeEntry(FLOW_TABLE_SORT_ORDER, (_d->flowTableSortOrder == Qt::AscendingOrder));
     localConfig.writeEntry(SHOW_SUBDOMAIN_LEVELS, _d->showSubdomainLevels);
+    localConfig.writeEntry(SHOW_FILTER_SORT_CONTROLS, _d->showFilterSortControls);
     localConfig.writeEntry(AGGREGATION_MODE, _d->aggregationMode);
 
     // Global config.

@@ -38,6 +38,7 @@ public:
     QList<bool> flowTableHiddenColumns;
     bool resolveNames;
     bool osProcessSortAscending;
+    bool showFilterSortControls;
     int showSubdomainLevels;
     QString customFilter;
     int aggregationMode;

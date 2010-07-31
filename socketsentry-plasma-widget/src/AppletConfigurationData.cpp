@@ -19,7 +19,8 @@
 
 AppletConfigurationData::AppletConfigurationData() :
     flowTableSortColumn(-1), flowTableSortOrder(Qt::AscendingOrder), resolveNames(false),
-    osProcessSortAscending(false), showSubdomainLevels(0), aggregationMode(0) {
+    osProcessSortAscending(false), showFilterSortControls(false), showSubdomainLevels(0),
+    aggregationMode(0) {
 }
 
 AppletConfigurationData::~AppletConfigurationData() {

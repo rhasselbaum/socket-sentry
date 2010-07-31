@@ -36,7 +36,9 @@
 #include <Plasma/Frame>
 
 NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
-    QGraphicsWidget(parent), _titleFrame(NULL), _mainWidgetIndex(-1), _flowView(NULL), _errorWidget(NULL), _topmostLayout(NULL) {
+    QGraphicsWidget(parent), _titleFrame(NULL), _flowView(NULL), _errorWidget(NULL), _topmostLayout(NULL) {
+
+    setMinimumSize(QSizeF(200, 200));
 
     // Add title frame.
     _topmostLayout = new QGraphicsLinearLayout(Qt::Vertical);
@@ -45,21 +47,21 @@ NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     _topmostLayout->addItem(_titleFrame);
 
     // Create search and sort freeze panel.
-    QGraphicsWidget* filterSortWidget = new QGraphicsWidget();
+    _filterSortWidget = new QGraphicsWidget();
     QGraphicsLinearLayout* filterSortLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     Plasma::Label* filterLabel = new Plasma::Label();
     filterSortLayout->addItem(filterLabel);
     filterLabel->setText(i18n("Search"));
-    Plasma::LineEdit* filterEdit = new Plasma::LineEdit();
-    filterEdit->setClearButtonShown(true);
-    filterSortLayout->addItem(filterEdit);
+    _filterEdit = new Plasma::LineEdit();
+    _filterEdit->setClearButtonShown(true);
+    filterSortLayout->addItem(_filterEdit);
     filterSortLayout->addStretch();
-    Plasma::CheckBox* freezeSortCheck = new Plasma::CheckBox();
-    freezeSortCheck->setText(i18n("Freeze sort"));
-    freezeSortCheck->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);     // needed for KDE 4.4 or label gets cut off
-    filterSortLayout->addItem(freezeSortCheck);
-    filterSortWidget->setLayout(filterSortLayout);
-    _topmostLayout->addItem(filterSortWidget);
+    _freezeSortCheck = new Plasma::CheckBox();
+    _freezeSortCheck->setText(i18n("Freeze sort"));
+    _freezeSortCheck->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);     // needed for KDE 4.4 or label gets cut off
+    filterSortLayout->addItem(_freezeSortCheck);
+    _filterSortWidget->setLayout(filterSortLayout);
+    _topmostLayout->addItem(_filterSortWidget);
 
     // Add the table view.
     _flowView = new CommunicationFlowTableView();
@@ -76,15 +78,14 @@ NetworkDeviceWidget::NetworkDeviceWidget(QGraphicsItem *parent) :
     connect(this, SIGNAL(configurationChanged(const AppletConfiguration&)),
             sourceModel, SLOT(readConfiguration(const AppletConfiguration&)));
     proxyModel->setSourceModel(sourceModel);
-    connect(filterEdit->nativeWidget(), SIGNAL(textChanged(const QString&)),
+    connect(_filterEdit->nativeWidget(), SIGNAL(textChanged(const QString&)),
             proxyModel, SLOT(setFilterWildcard(const QString&)));
-    freezeSortCheck->setChecked(proxyModel->getFreezeSort());
-    connect(freezeSortCheck, SIGNAL(toggled(bool)), proxyModel, SLOT(setFreezeSort(bool)));
+    _freezeSortCheck->setChecked(proxyModel->getFreezeSort());
+    connect(_freezeSortCheck, SIGNAL(toggled(bool)), proxyModel, SLOT(setFreezeSort(bool)));
     connect(proxyModel, SIGNAL(freezeSortStateChanged(bool)),
-            (QAbstractButton*)freezeSortCheck->nativeWidget(), SLOT(setChecked(bool)));
+            (QAbstractButton*)_freezeSortCheck->nativeWidget(), SLOT(setChecked(bool)));
     _flowView->setModel(proxyModel);
     _topmostLayout->addItem(_flowView);
-    _mainWidgetIndex = _topmostLayout->count() - 1;
     setLayout(_topmostLayout);
 
     // Create the error widget, but hidden and not added to the layout.
@@ -114,6 +115,13 @@ NetworkDeviceWidget::~NetworkDeviceWidget() {
         delete _flowView;
         _flowView = NULL;
     }
+
+    // If the filter-sort widget is not in the layout, we own it and need to delete it.
+    // Else, the layout will take care of it.
+    if (!_filterSortWidget->isVisible()) {
+        delete _filterSortWidget;
+        _filterSortWidget = NULL;
+    }
 }
 
 void NetworkDeviceWidget::updateTitle(bool defaultDeviceSelected) {
@@ -132,6 +140,7 @@ void NetworkDeviceWidget::readConfiguration(const AppletConfiguration& newConfig
         _deviceName = newConfig.getSelectedDevice();
         updateTitle(newConfig.isDefaultDevice());
     }
+    setFilterSortVisible(newConfig.getShowFilterSortControls());
     emit configurationChanged(newConfig);
 }
 
@@ -154,6 +163,41 @@ void NetworkDeviceWidget::deviceFailed(const QString& deviceName, const QString&
     }
 }
 
+void NetworkDeviceWidget::setFilterSortVisible(bool visible) {
+    if (visible != isFilterSortVisible()) {
+        if (visible) {
+            // Show the widget.
+            Q_ASSERT(findLayoutItem(_filterSortWidget) == -1);      // should be hidden right now
+            // Place it after the title widget.
+            int widgetIndex = findLayoutItem(_titleFrame) + 1;
+            Q_ASSERT(widgetIndex > 0);
+            _topmostLayout->insertItem(widgetIndex, _filterSortWidget);
+            _filterSortWidget->show();
+        } else {
+            // Turn off filter and freeze sort.
+            _filterEdit->setText("");
+            _freezeSortCheck->setChecked(false);
+            // Hide thw widget.
+            int widgetIndex = findLayoutItem(_filterSortWidget);
+            Q_ASSERT(widgetIndex >= 0);
+            _filterSortWidget->hide();
+            _topmostLayout->removeAt(widgetIndex);
+        }
+    } // Else, nothing to do.
+}
+
+int NetworkDeviceWidget::findLayoutItem(QGraphicsLayoutItem* item) const {
+    // Weird that Qt doesn't provide a method like this in the layout class. Am I missing something?
+    int result = -1;
+    for (int i = 0; i < _topmostLayout->count(); i++) {
+        if (_topmostLayout->itemAt(i) == item) {
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
+
 void NetworkDeviceWidget::swapMainWidgets() {
     // Ideally, we'd use a QStackedLayout here, but that's not available to QGraphicsWidgets (yet).
     // So we swap widgets by removing one from the layout and adding the other. Crude, but it works.
@@ -167,11 +211,13 @@ void NetworkDeviceWidget::swapMainWidgets() {
         newForegroundWidget = _errorWidget;
         newBackgroundWidget = _flowView;
     }
+
     // Hide and remove new background widget.
+    int widgetIndex = findLayoutItem(newBackgroundWidget);
+    Q_ASSERT(widgetIndex >= 0);
     newBackgroundWidget->hide();
-    Q_ASSERT(_topmostLayout->itemAt(_mainWidgetIndex) == newBackgroundWidget);
-    _topmostLayout->removeAt(_mainWidgetIndex);
+    _topmostLayout->removeAt(widgetIndex);
     // Show and add the new foreground object.
-    _topmostLayout->insertItem(_mainWidgetIndex, newForegroundWidget);
+    _topmostLayout->insertItem(widgetIndex, newForegroundWidget);
     newForegroundWidget->show();
 }

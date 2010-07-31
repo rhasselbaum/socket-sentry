@@ -2,7 +2,9 @@ Socket Sentry changelog
 
 0.9.3
 =====
-* CHANGED Ubuntu packaging to be more release-agnostic.
+* ADDED option to hide quick search and freeze sort controls for more
+  compact display.
+* CHANGED packaging to support multiple releases of the same distro.
 
 0.9.2 - 5-Apr-2010
 ==================

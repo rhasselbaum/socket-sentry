@@ -43,6 +43,9 @@ void LocalSettingsUi::readConfiguration(const AppletConfiguration& config) {
     }
     _ui.selectedDeviceComboBox->setCurrentIndex(_ui.selectedDeviceComboBox->findText(config.getSelectedDevice()));
 
+    // Filter-sort controls toggle.
+    _ui.showFilterSortCheckBox->setChecked(config.getShowFilterSortControls());
+
     // Aggregation selection.
     switch (config.getAggregationMode()) {
     case AppletConfiguration::HostPairProcess:
@@ -101,6 +104,9 @@ void LocalSettingsUi::writeConfiguration(AppletConfiguration& config) {
     if (!selectedDevice.isEmpty()) {
         config.setSelectedDevice(selectedDevice);
     }
+
+    // Filter-sort controls toggle.
+    config.setShowFilterSortControls(_ui.showFilterSortCheckBox->isChecked());
 
     // Aggregation mode.
     if (_ui.hostPairProcessRadioButton->isChecked()) {
