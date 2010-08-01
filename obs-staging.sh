@@ -48,9 +48,9 @@ tar cvfz staging/$BASE_NAME.tar.gz \
 	--transform s\\^\\$BASE_NAME/\\g * >/dev/null
 check_errs $? "Can't create archive $BASE_NAME"
 
-# Create RPM spec for openSUSE.
+# Create RPM specs for openSUSE.
 echo "Creating RPM spec."
-sed <obs/socketsentry_basic.spec -e s/@VERSION@/$VERSION/g >staging/$BASE_NAME-openSUSE_11.2.spec
+sed <obs/socketsentry_basic.spec -e s/@VERSION@/$VERSION/g >staging/$BASE_NAME.spec
 check_errs $? "Can't generate spec file."
 
 # Create Debian files for Kubuntu.
