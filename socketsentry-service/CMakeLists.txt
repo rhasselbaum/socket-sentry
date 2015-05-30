@@ -25,6 +25,7 @@ include (${QT_USE_FILE})
 
 # Other runtime dependencies.
 find_library (PCAP pcap)
+find_package (Threads)
 
 include_directories (${QT4_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR} src)
 
@@ -103,7 +104,7 @@ set (SsService_TEST_SRCS
 qt4_wrap_cpp (SsService_MOC_OUTFILES ${SsService_MOC_HEADERS})
 set (SsService_ALL_SRCS ${SsService_SRCS} ${SsService_MOC_OUTFILES} ${SsCommon_SRCS})
 add_library (socksent-service-common STATIC ${SsService_ALL_SRCS})
-target_link_libraries (socksent-service-common ${QT_LIBRARIES} ${PCAP})
+target_link_libraries (socksent-service-common ${QT_LIBRARIES} ${PCAP} ${CMAKE_THREAD_LIBS_INIT})
 
 # Create the service executable.
 set (SS_SERVICE_EXE socksent-service)

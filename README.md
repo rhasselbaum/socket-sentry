@@ -1,6 +1,6 @@
 # Pardon our dust
 
-__This project has been dormant for a while, but changes are coming! We're making a new home on GitHub, so please bear with me as I clean up wiki. But that's not all! A Plasma 5 port is in the works so watch this space.__
+__This project has been dormant for a while, but changes are coming! We're making a new home on GitHub, so please bear with me as I clean up the wiki. But that's not all! A Plasma 5 port is in the works so watch this space.__
 
 # Overview
 
