@@ -1,0 +1,8 @@
+# Ignore build and staging directories.
+build/
+staging/
+
+# Ignore Eclipse project artifacts.
+.cproject
+.externalToolBuilders/cmake.launch
+.project
