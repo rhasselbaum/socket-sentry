@@ -1,6 +1,6 @@
 # The end
 
-__This project is obsolete. Unfortunately, I don't have the time or motivation to migrate it to newer Plasma/Qt versions. I'll keep the repo up in case anyone extracts value from it. Thanks to all those who offered encouragement!__
+__This project is obsolete. Unfortunately, I don't have the time or motivation to migrate it to newer Plasma/Qt versions. I'll keep the repo up in case anyone finds value in it. Thanks to all those who offered encouragement!__
 
 # Overview
 
