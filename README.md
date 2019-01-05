@@ -1,6 +1,6 @@
-# Watch this space
+# The end
 
-__This project has been dormant for a while, but changes are coming! We're making a new home on GitHub so please bear with me as I clean up the wiki. Plus, an update to Plasma 5 is in the works. Stay tuned for more news.__
+__This project is obsolete. Unfortunately, I don't have the time or motivation to migrate it to newer Plasma/Qt versions. I'll keep the repo up in case anyone extracts value from it. Thanks to all those who offered encouragement!__
 
 # Overview
 
